@@ -1,0 +1,18 @@
+baseurl = "http://laco0416.github.io/"
+languageCode = "en-us"
+title = "laco notes"
+theme = "beautifulhugo"
+pygmentsUseClasses = true
+googleAnalytics = "UA-52362663-4"
+
+[permalinks]
+  post = "/:year/:month/:title/"
+
+[Params]
+  logo = "img/icon.png"
+  subtitle = "JavaScript, Web, Angular"
+
+[Author]
+  name = "Suguru INATOMI"
+  github = "laco0416"
+  twitter = "laco0416"
