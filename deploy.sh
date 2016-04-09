@@ -18,4 +18,4 @@ git commit -m "$msg"
 # Push source and build repos.
 git push origin `git subtree split --prefix public master`:master --force
 git rm --cached -rf public
-git commit -m "." --amond
+git commit -m "$msg" --amend
