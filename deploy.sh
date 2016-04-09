@@ -17,9 +17,8 @@ git commit -m "$msg"
 
 # Push source and build repos.
 # git push origin hugo-src
-git checkout master
-git pull
+# git checkout master
 git add public/* -f
-git commit -m "$msg"
+git commit -m "."
 git push origin `git subtree split --prefix public master`:master --force
-git checkout hugo-src
+# git checkout hugo-src
