@@ -22,5 +22,5 @@ git add public/* -f
 git commit -m "$msg"
 git push origin `git subtree split --prefix public master`:master --force
 git checkout hugo-src
-git rm -rf public
+git rm -rf public/
 git commit -m "$msg" --amend
