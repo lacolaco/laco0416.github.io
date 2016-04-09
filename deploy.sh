@@ -16,7 +16,7 @@ fi
 git commit -m "$msg"
 
 # Push source and build repos.
-git push origin hugo-src
+git push origin hugo-src -f
 # git checkout master
 git add public/* -f
 git commit -m "."
