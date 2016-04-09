@@ -20,5 +20,6 @@ git push origin hugo-src -f
 git checkout master
 git add public/* -f
 git commit -m "."
-git push origin `git subtree split --prefix public master`:master --force
+# git push origin `git subtree split --prefix public master`:master --force
+git subtree push --prefix=public origin master
 git checkout hugo-src
