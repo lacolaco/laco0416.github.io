@@ -17,4 +17,6 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin hugo-src
+git add -r public
 git subtree push --prefix=public git@github.com:laco0416/laco0416.github.io.git master
+git rm --cached -rf public
