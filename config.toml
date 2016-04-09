@@ -1,8 +1,7 @@
 baseurl = "http://laco0416.github.io/"
-languageCode = "en-us"
+languageCode = "ja-jp"
 title = "laco notes"
 theme = "beautifulhugo"
-pygmentsUseClasses = true
 googleAnalytics = "UA-52362663-4"
 
 [permalinks]
