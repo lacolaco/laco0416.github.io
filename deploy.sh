@@ -19,5 +19,5 @@ git commit -m "$msg"
 git push origin hugo-src
 git add public -f
 git commit -m "."
-git push origin `git subtree split --prefix public master`:master --force
-# git subtree push --prefix=public origin master
+# git push origin `git subtree split --prefix public master`:master --force
+git subtree push --prefix=public origin master
