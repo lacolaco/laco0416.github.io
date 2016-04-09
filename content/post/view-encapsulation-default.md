@@ -1,6 +1,6 @@
 +++
 date = "2016-04-10T00:23:58+09:00"
-draft = true
+draft = false
 title = "ViewEncapsulationのフォールバック"
 
 +++
