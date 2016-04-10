@@ -1,7 +1,8 @@
 +++
 date = "2016-04-10T00:23:58+09:00"
-draft = false
 title = "ViewEncapsulationのフォールバック"
+slug = "angular2-view-encapsulation-fallback"
+tags = [ "Angular2" ]
 
 +++
 

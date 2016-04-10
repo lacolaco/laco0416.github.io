@@ -4,9 +4,6 @@ title = "laco notes"
 theme = "beautifulhugo"
 googleAnalytics = "UA-52362663-4"
 
-[permalinks]
-  post = "/:year/:month/:title/"
-
 [Params]
   logo = "img/icon.png"
   subtitle = "JavaScript, Web, Angular"
@@ -15,3 +12,6 @@ googleAnalytics = "UA-52362663-4"
   name = "Suguru INATOMI"
   github = "laco0416"
   twitter = "laco0416"
+  
+[[main.menu]]
+  
