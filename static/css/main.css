@@ -298,7 +298,7 @@ footer .theme-by {
 }
 
 .post-preview .post-title {
-  font-size: 30px;
+  font-size: 24px;
   margin-top: 0;
 }
 .post-preview .post-subtitle {
@@ -322,7 +322,7 @@ footer .theme-by {
 
 @media only screen and (min-width: 768px) {
   .post-preview .post-title {
-    font-size: 36px;
+    font-size: 24px;
   }
 }
 
@@ -366,11 +366,11 @@ footer .theme-by {
 }
 .intro-header .page-heading h1 {
   margin-top: 0;
-  font-size: 50px;
+  font-size: 24px;
 }
 .intro-header .post-heading h1 {
   margin-top: 0;
-  font-size: 35px;
+  font-size: 24px;
 }
 .intro-header .page-heading .page-subheading,
 .intro-header .post-heading .post-subheading {
@@ -412,17 +412,17 @@ footer .theme-by {
     margin-top: 130px;
   }
   .intro-header.big-img {
-    margin-top: 91px;  /* Full navbar is small navbar + 20px padding on each side when expanded */
+    margin-top: 0;  /* Full navbar is small navbar + 20px padding on each side when expanded */
   } 
   .intro-header.big-img .page-heading,
   .intro-header.big-img .post-heading  {
-    padding: 150px 0;
+    padding: 10px 0;
   }  
   .intro-header .page-heading h1 {
-    font-size: 80px;
+    font-size: 32px;
   }
   .intro-header .post-heading h1 {
-    font-size: 50px;
+    font-size: 32px;
   }
   .intro-header.big-img .img-desc {
     font-size: 14px;
