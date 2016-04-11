@@ -13,5 +13,14 @@ googleAnalytics = "UA-52362663-4"
   github = "laco0416"
   twitter = "laco0416"
   
-[[main.menu]]
-  
+[[menu.main]]
+    name = "Top"
+    weight = -100
+    identifier = "top"
+    url = "/"
+ 
+[[menu.main]]
+    name = "RSS"
+    weight = 1
+    identifier = "rss"
+    url = "/index.xml"
