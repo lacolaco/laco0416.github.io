@@ -1,6 +1,6 @@
 baseurl = "https://laco0416.github.io/"
 languageCode = "ja-jp"
-title = "laco notes"
+title = "laco's blog"
 theme = "beautifulhugo"
 googleAnalytics = "UA-52362663-4"
 
