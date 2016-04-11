@@ -68,7 +68,17 @@
                         </a>
                     </li>
 
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
                 </ul>
+
                 <p class="copyright text-muted">
                     {{ .Site.Author.name }} &nbsp;&bull;&nbsp; {{ .Site.LastChange.Format "2006" }} {{ if .Site.Title }} &nbsp;&bull;&nbsp;
                     <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a> {{ end }}
