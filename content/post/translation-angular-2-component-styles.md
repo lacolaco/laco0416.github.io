@@ -62,9 +62,6 @@ Angular 2のコンポーネントを書くとき、HTMLのテンプレートだ�
 
 ### `:host`
 `:host`擬似クラスセレクタは、そのコンポーネント自身にマッチします。(コンポーネント内のすべての要素にヒットするわけではありません)
-
-  Use the `:host` pseudo-class selector to target styles in the element that *hosts* the component (as opposed to
-  targeting elements *inside* the component's template):
   
 ```css
 :host {
