@@ -232,7 +232,7 @@ Angular 2では、コンポーネントごとに、スタイルのカプセル�
 - `None`：Angularによるカプセル化を行いません。
 これまでに述べたスコーピングは適用されず、グローバルなスタイルが直接影響します。
 
-これらはコンポーネントのメタデータにある`encapsulation`プロパティｎセットします。
+これらはコンポーネントのメタデータにある`encapsulation`プロパティにセットします。
 
 ```ts
 // warning: few browsers support shadow DOM encapsulation at this time
