@@ -68,7 +68,7 @@ otherwiseとは言葉どおり「その他」を定義できる機能です。�
 もちろんリダイレクトではなく通常のルートとして404用のコンポーネントにルーティングすることもできるでしょう。
 すべては設定次第です。
 
-### `useAsDefault` vs `/*othwerwise`
+### `useAsDefault` vs otherwise
 otherwiseルートはデフォルトルートよりも優先度が高いので、
 もしotherwiseルートが定義されている場合はルートパスでもotherwiseルートが適用されます。
 
