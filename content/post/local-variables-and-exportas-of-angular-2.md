@@ -202,18 +202,9 @@ export class App {
 }
 ```
 
-[Plunker](http://plnkr.co/edit/xDSVImO4wbFYLGIqViFO?p=preview)で実際に動くサンプルを見ることができます。
+[こちら](http://plnkr.co/edit/xDSVImO4wbFYLGIqViFO?p=preview) で実際に動くサンプルを見ることができます。
 
 ## まとめ
 Angular 2のローカル変数について基礎的な部分を紹介し、`exportAs`を活用することで機能的なディレクティブを作れることがわかってもらえたと思います。
 ローカル変数を使うとコンポーネントのコード量を減らし、テンプレート内で直感的にHTML要素やディレクティブのインスタンスを扱うことができます。
 ぜひ活用してみてください。
-
-
-
-
-
-
-
-
-
