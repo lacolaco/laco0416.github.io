@@ -71,9 +71,14 @@ otherwiseとは言葉どおり「その他」を定義できる機能です。�
 ### デフォルトルート vs otherwiseルート
 otherwiseルートはデフォルトルートよりも優先度が高いので、
 もしotherwiseルートが定義されている場合はルートパスでもotherwiseルートが適用されます。
+そのため、トップレベルのRouteComponentではotherwiseを使うと良いでしょう。
+
+デフォルトルートは 非終端ルート( `/...` ) により入れ子になったルートの定義で使います。
+`/nested/...` というパスでルーティングされる先のコンポーネントでは、
+RouteConfigに必ず1つデフォルトルートを定義する必要があります。
+なぜなら `/nested/` にアクセスされたときに表示するコンポーネントが必要だからです。
 
 ## まとめ
 この記事ではデフォルトルートとotherwiseルートの使い方と違いについて解説しました。
 もしAngular 2のルーティングについてもっと広く知りたければ、
 公式ドキュメントの [Routing & Navigation](https://angular.io/docs/ts/latest/guide/router.html) を読むとよいでしょう。
-
