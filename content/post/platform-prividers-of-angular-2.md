@@ -8,7 +8,7 @@ Angular 2のDependency Injection(DI)は主にサービスクラスのインス�
 実は他にも便利な使い方がいくつかあります。
 今回はその中から `PLATFORM_DIRECTIVES` と `PLATFORM_PIPES` の使い方を紹介します。
 
-<!-- more -->
+<!--more-->
 
 ## Angular 2のProviderと`multi`オプション
 まずはじめに、Angular 2のProviderの仕組みについておさらいしましょう。
