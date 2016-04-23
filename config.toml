@@ -1,4 +1,4 @@
-baseurl = "https://laco0416.github.io/"
+baseurl = "http://blog.lacolaco.net/"
 languageCode = "ja-jp"
 title = "laco's blog"
 theme = "beautifulhugo"
