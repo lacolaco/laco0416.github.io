@@ -44,8 +44,8 @@ export abstract class Broadcaster {
 ``` 
 
 `Broadcaster` has two methods; `broadcast` and `on`.
-`broadcast` will be used to fire an event with specified event name.
-In other hand, `on` returns an observable of events which broadcasted the name. 
+`broadcast` will be used to fire an event with event-specific key.
+In other hand, `on` returns an observable of events which broadcasted the key. 
 
 Angular 1's `$broadcast` is used with **string** key.
 
