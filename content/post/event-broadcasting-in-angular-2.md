@@ -24,7 +24,7 @@ interface BroadcastEvent {
   data?: any;
 }
 
-export abstract class Broadcaster {
+export class Broadcaster {
   private _eventBus: Subject<BroadcastEvent>;
 
   constructor() {
