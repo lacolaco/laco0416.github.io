@@ -1,5 +1,5 @@
 baseurl = "http://blog.lacolaco.net/"
-languageCode = "ja-jp"
+languageCode = "ja-JP"
 title = "laco's blog"
 theme = "beautifulhugo"
 googleAnalytics = "UA-52362663-4"
@@ -14,10 +14,10 @@ googleAnalytics = "UA-52362663-4"
   twitter = "laco0416"
   
 [[menu.main]]
-    name = "Top"
+    name = "About"
     weight = -100
-    identifier = "top"
-    url = "/"
+    identifier = "about"
+    url = "/page/about"
  
 [[menu.main]]
     name = "RSS"
