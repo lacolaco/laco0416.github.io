@@ -90,7 +90,7 @@ export class ChildComponent {
 }
 ``` 
 
-Great, we've regained `$rootScope.$broadcast`! 
+Great, we regained `$rootScope.$broadcast`! 
 But there are some problems; loosing **typo-safety** and **type-safety**. 
 
 ### _typo-safety_
