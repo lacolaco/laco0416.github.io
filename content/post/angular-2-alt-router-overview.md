@@ -4,6 +4,11 @@ title = "Angular 2 New Router Overview"
 
 +++
 
+: EDIT(2016-05-02)
+- Add a section for wildcard route
+- Update from `Tree<RouteSegment>` to `RouteTree`
+- Add a part of `router-link-active` class
+
 Angular core team (mainly [@victorsavkin](https://twitter.com/victorsavkin)) is developing new router package; **angular2/alt_router**.
 It's still experimental but its APIs are easier and more intuitive than _old_ angular2/router.
 Let's figure out overview of next generation router!
@@ -36,6 +41,18 @@ class AppRootComponent {
 }
 ```
 
+And **wildcards** are supported.
+
+```
+@Component({...})
+@Routes([
+    {path: "/team/:id", component: TeamComponent},
+    {path: "/*", component: DefaultComponent}
+])
+class AppRootComponent {
+}
+``` 
+
 Point: **New route config no longer has a _name_ property.**
 
 ## `<router-outlet>` component
@@ -63,6 +80,8 @@ We can use `<router-outlet>` as well as old router.
 <!--equivalent-->
 <a [routerLink]="['/team/33/user/victor']">Victor Savkin</a>
 ```
+
+If the link matches current route, `router-link-active` class is applied.
 
 ## `Router` class
 New router has `Router` class, which is almost similar to old `Router`.
@@ -100,8 +119,8 @@ class SomeComponent implements OnActivate {
     routerOnActivate(
         curr: RouteSegment, 
         prev?: RouteSegment, 
-        currTree?: Tree<RouteSegment>, 
-        prevTree?: Tree<RouteSegment>
+        currTree?: RouteTree, 
+        prevTree?: RouteTree
     ): void {
         ...
     }
@@ -112,8 +131,8 @@ Arguments of `routerOnActivate` are completely changed.
 
 - **curr: RouteSegment**: Current (in activating) segment 
 - **prev?: RouteSegment**: Previous segment 
-- **currTree?: Tree&lt;RouteSegment&gt;**: A segment tree composing current route
-- **prevTree?: Tree&lt;RouteSegment&gt;**: A previous segment tree
+- **currTree?: RouteTree;**: A segment tree composing current route
+- **prevTree?: RouteTree;**: A previous segment tree
 
 ### `RouteSegment`: new API like `ComponentInstruction`
 `RouteSegment` represents an information of the component transition.
@@ -150,7 +169,7 @@ class AppRootComponent {
 }
 ```
 
-### `Tree<T>`: Generic tree structure
+### `RouteTree`: Tree structure of routes
 `RouteSegment` has the information of _single_ route transition.
 it means the segment doesn't have any parameters of parent routes.
 
@@ -185,7 +204,7 @@ In this case, `currTree` allows us to access **parent segment**.
 @Component({...})
 class UserComponent {
     
-    routerOnActivate(curr: RouteSegment, prev, currTree: Tree<RouteSegment>) {
+    routerOnActivate(curr: RouteSegment, prev, currTree: RouteTree) {
         let name = curr.getParam("name"); // OK!
         let teamSegment = currTree.parent(curr); // "parent of curr"
         let teamId = teamSegment.getParam("id"); // OK!
@@ -198,7 +217,7 @@ Likewise, the tree has **child segment**
 ```
 @Component({...})
 class TeamComponent {    
-    routerOnActivate(curr: RouteSegment, prev, currTree: Tree<RouteSegment>) {
+    routerOnActivate(curr: RouteSegment, prev, currTree: RouteTree) {
         let id = curr.getParam("id");
         let userSegment = currTree.firstChild(curr);
         let currentUserName = userSegment.getParam("name");
@@ -206,7 +225,7 @@ class TeamComponent {
 }
 ```
 
-Point: New API; `RouteSegment` and `Tree`
+Point: New API; `RouteSegment` and `RouteTree`
 
 ### `CanDeactivate` 
 `CanDeactivate` defines route lifecycle method `routerCanDeactivate` same as old router's one.
@@ -216,7 +235,7 @@ Point: New API; `RouteSegment` and `Tree`
 class SomeComponent implements CanDeactivate {
   constructor(private logService: LogService) {}
   
-  routerCanDeactivate(currTree: Tree<RouteSegment>, furuteTree: Tree<RouteSegment>): Promise<boolean> {
+  routerCanDeactivate(currTree: RouteTree, furuteTree: RouteTree): Promise<boolean> {
     return Promise.resolve(confirm('Are you sure you want to leave?'));
   }
 }
@@ -227,7 +246,7 @@ class SomeComponent implements CanDeactivate {
 - `<router-outlet>` and `routerLink` are alive!
 - `RouteConfig` turns into `Routes`
 - Route definition no longer has own name
-- New API: `RouteSegment` and `Tree`
+- New API: `RouteSegment` and `RouteTree`
 
 New router is nice but you should be careful.
 
