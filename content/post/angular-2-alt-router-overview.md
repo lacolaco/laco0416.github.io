@@ -4,10 +4,13 @@ title = "Angular 2 New Router Overview"
 
 +++
 
-: EDIT(2016-05-02)
+EDIT(2016-05-02):
+
 - Add a section for wildcard route
 - Update from `Tree<RouteSegment>` to `RouteTree`
 - Add a part of `router-link-active` class
+
+---
 
 Angular core team (mainly [@victorsavkin](https://twitter.com/victorsavkin)) is developing new router package; **angular2/alt_router**.
 It's still experimental but its APIs are easier and more intuitive than _old_ angular2/router.
