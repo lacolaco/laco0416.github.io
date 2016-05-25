@@ -5,7 +5,7 @@ theme = "beautifulhugo"
 googleAnalytics = "UA-52362663-4"
 
 [Params]
-  logo = "img/icon.png"
+  logo = "http://blog.lacolaco.net/img/icon.png"
   subtitle = "JavaScript, Web, Angular"
 
 [Author]
