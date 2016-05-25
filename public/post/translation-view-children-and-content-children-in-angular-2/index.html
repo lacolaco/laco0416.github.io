@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>[日本語訳] ViewChildren and ContentChildren in Angular 2</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://blog.lacolaco.net/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="[日本語訳] ViewChildren and ContentChildren in Angular 2" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="http://blog.lacolaco.net/img/icon.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.lacolaco.net/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about/">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="http://blog.lacolaco.net/">
+                    <img class="avatar-img" src="http://blog.lacolaco.net/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>[日本語訳] ViewChildren and ContentChildren in Angular 2</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 16, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<ul>
+<li>Original: <a href="http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/">ViewChildren and ContentChildren in Angular 2</a></li>
+<li>Written by: <a href="http://twitter.com/mgechev">Minko Gechev</a></li>
+<li>Translated at: 04/16/2016</li>
+</ul>
+
+<hr />
+
+<p>この記事ではAngular 2の <strong>View Children</strong> と <strong>Content Children</strong> の違いについて解説します。</p>
+
+<p>それぞれの子要素に対して、親コンポーネントからどのようにアクセスするのかを理解し、
+そして<code>@Component</code>デコレータの <code>providers</code> と <code>viewProviders</code> の2つのプロパティの違いについても述べていきます。</p>
+
+<h2 id="プリミティブの合成:7713c25961af28c6174f42a6a8bd0ad5">プリミティブの合成</h2>
+
+<p>まず初めに、Angular 2のコンポーネントとディレクティブの関係についておさらいしましょう。
+ユーザーインタフェースを作るのに一般的なデザインは<a href="https://ja.wikipedia.org/wiki/Composite_%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3">Compositeパターン</a>です。
+このデザインパターンは異なるプリミティブを合成し、1つのインスタンスとして同じ方法で扱えるようにします。
+関数型プラグラミングの世界では関数を合成することもできます。例えば次のように</p>
+
+<pre><code>map ((*2).(+1)) [1, 2, 3]
+-- [4,6,8]
+</code></pre>
+
+<p>このHaskellのコードは<code>(*2)</code>と<code>(+1)</code>という2つの関数を合成し、
+リスト内の各アイテム<code>n</code>に対して<code>n -&gt; + 1 -&gt; * 2</code>という流れで適用されます。</p>
+
+<h2 id="uiにおける合成:7713c25961af28c6174f42a6a8bd0ad5">UIにおける合成</h2>
+
+<p>ユーザーインタフェースにおいても同じことがいえます。
+コンポーネントを1つの関数として見てみましょう。
+各関数は順序に従って合成可能であり、結果として複雑なコンポーネントを作ることができます。</p>
+
+<p>この構造は次の図で表すことができます。</p>
+
+<p><img src="http://blog.mgechev.com/images/component-directive-angular2.png" alt="image" /></p>
+
+<p>この図には2つの要素があります。</p>
+
+<ul>
+<li>Directive: ロジックを持った要素ですが、構造は内包していません。</li>
+<li>Component: 1つの要素であり、1つのディレクティブでもあります。そして複数のディレクティブを内包しています。(コンポーネントを内包することもできます)</li>
+</ul>
+
+<p>これはつまり、次のような構造を作ることができるということです。</p>
+
+<p><img src="http://blog.mgechev.com/images/component-tree-angular2.png" alt="image" /></p>
+
+<p>上の図を見ると、コンポーネントとディレクティブによる階層構造ができていることがわかります。
+末端の要素はディレクティブか、ディレクティブを内包しないコンポーネントのどちらかになります。</p>
+
+<h2 id="angular-2におけるコンポーネントの合成:7713c25961af28c6174f42a6a8bd0ad5">Angular 2におけるコンポーネントの合成</h2>
+
+<p>さて、そろそろAngular 2の具体的な話をしましょう。</p>
+
+<p>これから説明することをわかりやすくするために、簡単なアプリケーションを作っていきます。</p>
+
+<pre><code class="language-ts">// ...
+@Component({
+  selector: 'todo-app',
+  providers: [TodoList],
+  directives: [TodoCmp, TodoInputCmp],
+  template: `
+    &lt;section&gt;
+      Add todo:
+      &lt;todo-input (onTodo)=&quot;addTodo($event)&quot;&gt;&lt;/todo-input&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+      &lt;h4 *ngIf=&quot;todos.getAll().length&quot;&gt;Todo list&lt;/h4&gt;
+      &lt;todo *ngFor=&quot;var todo of todos.getAll()&quot; [todo]=&quot;todo&quot;&gt;
+      &lt;/todo&gt;
+    &lt;/section&gt;
+    &lt;ng-content select=&quot;footer&quot;&gt;&lt;/ng-content&gt;
+  `
+})
+class TodoAppCmp {
+  constructor(private todos: TodoList) {}
+  addTodo(todo) {
+    this.todos.add(todo);
+  }
+}
+// ...
+</code></pre>
+
+<p>これは <em>Yet another MV* todo application</em> です. (訳注：アプリケーションの名前なのでそのまま残しています。)</p>
+
+<p>上では <code>todo-app</code> というセレクタで、テンプレートを持ったコンポーネントを定義しています。
+そして、子要素として使われるディレクティブのセットを定義しています。</p>
+
+<p>このコンポーネントは次のように使われます。</p>
+
+<pre><code class="language-html">&lt;todo-app&gt;&lt;/todo-app&gt;
+</code></pre>
+
+<p>これは標準的なXMLの構文なので、
+開始タグと終了タグの間に任意のcontentを挿入することができます。</p>
+
+<pre><code class="language-html">&lt;todo-app&gt;
+  &lt;footer&gt;
+    Yet another todo app!
+  &lt;/footer&gt;
+&lt;/todo-app&gt;
+</code></pre>
+
+<h2 id="ng-content-による基本的なcontentの表示:7713c25961af28c6174f42a6a8bd0ad5"><code>ng-content</code> による基本的なcontentの表示</h2>
+
+<p>ここで <code>todo-app</code> コンポーネントの定義にちょっと戻りましょう。
+テンプレートの最後の要素 <code>&lt;ng-content select=&quot;footer&quot;&gt;&lt;/ng-content&gt;</code> に気づきましたか？
+<code>ng-content</code> を使うと、そのコンポーネントの開始タグと終了タグの間に置かれたcontentを、テンプレートの中に投影することができます！
+<code>ng-content</code> に与えている <code>select</code> 属性はCSSのセレクタで、contentの中から投影するものを選ぶことができます。
+上の例では <code>footer</code> が <code>todo-app</code> コンポーネントの一番下に挿入されます。</p>
+
+<p>もし <code>select</code> 要素を省いた場合は、content全体が投影されます。</p>
+
+<p><code>&lt;todo-input&gt;</code> と <code>&lt;todo&gt;</code> の2つのコンポーネントについては今回の話には関係ないので実装部分を省略していますが、
+このアプリケーションの完成形はこんな感じになります。</p>
+
+<p><img src="http://blog.mgechev.com/images/todo-app-sample.gif" alt="image" /></p>
+
+<h2 id="viewchildren-と-contentchildren:7713c25961af28c6174f42a6a8bd0ad5">ViewChildren と ContentChildren</h2>
+
+<p>ここまでは簡単でしたね！さて、ようやくView ChildrenとContent Childrenという概念を定義する準備ができました。</p>
+
+<p>その定義とは、「テンプレートの中に配置された子要素を <em>View Children</em> と呼ぶ」、
+そして「開始タグと終了タグの間に置かれた要素を <em>Content Children</em> と呼ぶ」です。</p>
+
+<p>つまり、<code>todo-input</code> と <code>todo</code> の2つの要素は <code>todo-app</code> にとっての View Childrenであり、
+<code>footer</code> はContent Childであるというわけです。</p>
+
+<h3 id="子要素にアクセスする:7713c25961af28c6174f42a6a8bd0ad5">子要素にアクセスする</h3>
+
+<p>ようやく本題に入れます！2種類の子要素にどうやってアクセスし、操作するのか、その方法を見ていきましょう！</p>
+
+<h4 id="view-childrenを使った例:7713c25961af28c6174f42a6a8bd0ad5">View Childrenを使った例</h4>
+
+<p>Angular 2では次のプロパティデコレータを <code>angular2/core</code> パッケージで提供しています。：</p>
+
+<ul>
+<li><code>@ViewChildren</code></li>
+<li><code>@ViewChild</code></li>
+<li><code>@ContentChildren</code></li>
+<li><code>@ContentChild</code></li>
+</ul>
+
+<p>これは次のように使います。</p>
+
+<pre><code class="language-ts">import {ViewChild, ViewChildren, Component...} from 'angular2/core';
+
+// ...
+
+@Component({
+  selector: 'todo-app',
+  providers: [TodoList],
+  directives: [TodoCmp, TodoInputCmp],
+  template: `...`
+})
+class TodoAppCmp {
+  @ViewChild(TodoInputCmp)
+  inputComponent: TodoInputCmp
+  
+  @ViewChildren(TodoCmp)
+  todoComponents: QueryList&lt;TodoCmp&gt;;
+
+  constructor(private todos: TodoList) {}
+  ngAfterViewInit() {
+    // available here
+  }
+}
+
+// ...
+</code></pre>
+
+<p>上の例では、 <code>@ViewChildren</code> と <code>@ViewChild</code> を使っています。
+プロパティをデコレートすると、要素をクエリできるようになります。
+上の例だと、子コンポーネントである <code>TodoInputCmp</code> を <code>@ViewChild</code>で、 <code>TodoCmp</code> を <code>@ViewChildren</code> でクエリしています。
+2つのデコレータを使い分けている理由は、 <code>TodoInputCmp</code> は1つしかないので <code>@ViewChild</code> を使えますが、 <code>TodoCmp</code> は複数個が表示されるので <code>@ViewChildren</code> を使う必要があるからです。</p>
+
+<p>もう一つ重要なことは、 <code>inputComponent</code> と <code>todoComponents</code> の型です。
+前者のプロパティの型は <code>TodoInputCmp</code> になっています。
+これはクエリした結果要素が見つからなければnullになり、見つかればそのコンポーネントのインスタンスが代入されます。
+一方、 <code>todoComponents</code> プロパティの型は <code>QueryList&lt;TodoCmp&gt;</code> で、動的に増えたり減ったりする <code>TodoCmp</code>のインスタンスを扱えます。
+<code>QueryList</code> はObservableなコレクションなので、新しく追加されたり、要素が削除された時にはイベントを発生してくれます。</p>
+
+<p><strong>AngularのDOMコンパイラは <code>todo-app</code> コンポーネントを先に初期化し、その後子要素を初期化します。</strong>
+<strong>つまり <code>todo-app</code> コンポーネントの初期化の間は <code>inputComponent</code> も <code>todoComponents</code> もまだ初期化されていません</strong>
+<strong>これらは <code>ngAfterCiewInit</code> ライフサイクルフックのタイミングで使用可能になります</strong></p>
+
+<h4 id="content-childrenにアクセスする:7713c25961af28c6174f42a6a8bd0ad5">Content Childrenにアクセスする</h4>
+
+<p>Content Childrenについてもほとんど同じルールが通用しますが、少しだけ違いがあります。
+それを説明するために、 <code>TodoAppCmp</code> を使う側のルートコンポーネントを見てみましょう。</p>
+
+<pre><code class="language-ts"> @Component({
+  selector: 'footer',
+  template: '&lt;ng-content&gt;&lt;/ng-content&gt;'
+})
+class Footer {}
+
+@Component(...)
+class TodoAppCmp {...}
+
+@Component({
+  selector: 'app',
+  styles: [
+    'todo-app { margin-top: 20px; margin-left: 20px; }'
+  ],
+  template: `
+    &lt;content&gt;
+      &lt;todo-app&gt;
+        &lt;footer&gt;
+          &lt;small&gt;Yet another todo app!&lt;/small&gt;
+        &lt;/footer&gt;
+      &lt;/todo-app&gt;
+    &lt;/content&gt;
+  `,
+  directives: [TodoAppCmp, NgModel, Footer]
+})
+export class AppCmp {}
+</code></pre>
+
+<p>ここでは2つのコンポーネント <code>Footer</code> と <code>AppCmp</code> を定義しています。
+<code>Footer</code> は開始タグと終了タグの間に渡された要素をすべて投影します( <code>&lt;footer&gt;ここが表示されます&lt;/footer&gt;</code> )
+一方、 <code>AppCmp</code> は <code>TodoAppCmp</code> を使い、さらに <code>Footer</code> を開始タグと終了タグの間に渡しています。
+つまり、これは我々の用語では <code>Footer</code> はContent Childであるといえます。これにアクセスするには次の例のようにします。</p>
+
+<pre><code class="language-ts">// ...
+@Component(...)
+class TodoAppCmp {
+  @ContentChild(Footer)
+  footer: Footer;
+  
+  ngAfterContentInit() {
+    // this.footer is now with value set
+  }
+}
+// ...
+</code></pre>
+
+<p>View ChildrenとContent Childrenの違いは、使っているデコレータとライフサイクルフックの種類だけです。
+Content Childrenには <code>@ContentChild</code> または <code>@ContentChildren</code> デコレータを使い、
+<code>ngAfterContentInit</code> ライフサイクルで使用可能になります。</p>
+
+<h2 id="viewproviders-と-providers:7713c25961af28c6174f42a6a8bd0ad5"><code>viewProviders</code> と <code>providers</code></h2>
+
+<p>もうほとんど説明は終わってしまいました！
+最後のステップは、 <code>providers</code> と <code>viewProviders</code> の違いを理解することです。
+(もしあなたがAngular 2のDIのメカニズムを理解していなければ、まず <a href="https://www.packtpub.com/web-development/switching-angular-2">私の本</a> を読むといいでしょう)</p>
+
+<p>さて、それでは <code>TodoAppCmp</code> の宣言部分を覗いてみましょう。</p>
+
+<pre><code class="language-ts">class TodoList {
+  private todos: Todo[] = [];
+  add(todo: Todo) {}
+  remove(todo: Todo) {}
+  set(todo: Todo, index: number) {}
+  get(index: number) {}
+  getAll() {}
+}
+
+@Component({
+  // ...
+  viewProviders: [TodoList],
+  directives: [TodoCmp, TodoInputCmp],
+  // ...
+})
+class TodoAppCmp {
+  constructor(private todos: TodoList) {}
+  // ...
+}
+</code></pre>
+
+<p><code>@Component</code> デコレータの中で <code>viewProviders</code> プロパティがセットされ、 <code>TodoList</code> サービスが渡されています。
+<code>TodoList</code> サービスはすべてのTodoのアイテムを保持しているサービスです。</p>
+
+<p><code>TodoAppCmp</code> のコンストラクタでは <code>TodoList</code> をインジェクトしていますが、
+これは <code>TodoAppCmp</code> コンポーネントの中で使われている他のディレクティブ(もちろんコンポーネントも)でもインジェクト可能です。
+つまり、 <code>TodoList</code> は次の場所からアクセス可能です</p>
+
+<ul>
+<li>TodoAppCmp</li>
+<li>TodoCmp</li>
+<li>TodoInputCmp</li>
+</ul>
+
+<p>ところが、 <code>Footer</code> コンポーネントのコンストラクタでこのサービスをインジェクトしようとすると、次のようなエラーが表示されるでしょう。</p>
+
+<pre><code>EXCEPTION: No provider for TodoList! (Footer -&gt; TodoList)
+</code></pre>
+
+<p><strong>これは <code>viewProviders</code> によって宣言されたプロバイダはそのコンポーネントとView Childrenにだけアクセス可能になるということです</strong></p>
+
+<p><code>Footer</code> でも <code>TodoList</code> サービスにアクセスしたい場合は、 <code>viewProviders</code> から <code>providers</code> に変える必要があります。</p>
+
+<h3 id="viewproviders-はいつ使うべき:7713c25961af28c6174f42a6a8bd0ad5"><code>viewProviders</code> はいつ使うべき？</h3>
+
+<p>いったいどういう時に、Content Childrenからアクセスできないように <code>viewProviders</code> を使うべきなのでしょうか？
+仮にあなたがサードパーティのライブラリを作り、その中でインターナルなサービスを使うとします。
+そのサービスはライブラリの内部的なAPIの一部で、他のユーザーからはアクセスさせたくないものです。
+そのようなプライベートな依存性を <code>providers</code> を使って登録し、ライブラリで公開しているコンポーネントの中にユーザーがContent Childrenを渡すと、
+その人はアクセスできてしまいます。
+しかし、あなたが <code>viewProviders</code> を使えば、そのサービスは外からは使えなくなります。</p>
+
+<h2 id="まとめ:7713c25961af28c6174f42a6a8bd0ad5">まとめ</h2>
+
+<p>この記事ではコンポーネントとディレクティブの合成の方法について解説しました。
+また、View ChildrenとContent Childrenの違いと、それらにどうやってアクセスするのかについても紹介しました。</p>
+
+<p>そして最後に、 <code>viewProviders</code> と <code>providers</code> の意味についても説明しました。
+もしこのテーマにもっと興味がある場合は、私が書いている<a href="https://www.packtpub.com/web-development/switching-angular-2">Switching to Angular 2</a>を読むことをおすすめします！</p>
+
+            </article>
+            
+            <hr>
+                
+            <div class="social">
+                <div id="fb-root"></div>
+                <script>
+                    (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+                </script>
+
+                <div class="social-button">
+                    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </div>
+
+                <div class="social-button">
+                    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                        title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加"
+                            width="20" height="20" style="border: none;" /></a>
+                    <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+                </div>
+                <div class="social-button fb-share-button" data-layout="button" data-mobile-iframe="true"></div>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="http://blog.lacolaco.net/post/translation-angular-2-component-styles/" data-toggle="tooltip" data-placement="top" title="[日本語訳] Angular 2 Component Styles">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="http://blog.lacolaco.net/post/otherwise-and-default-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Angular 2のデフォルトルートとotherwiseルート">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="http://blog.lacolaco.net/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="http://blog.lacolaco.net/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://blog.lacolaco.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://blog.lacolaco.net/js/bootstrap.min.js"></script>
+<script src="http://blog.lacolaco.net/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

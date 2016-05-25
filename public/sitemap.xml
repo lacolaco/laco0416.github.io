@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://blog.lacolaco.net/</loc>
+    <lastmod>2016-05-25T13:00:00+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/dynamic-component-creation-in-angular-2/</loc>
+    <lastmod>2016-05-25T13:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/angular-2-alt-router-overview/</loc>
+    <lastmod>2016-04-30T20:24:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/event-broadcasting-in-angular-2/</loc>
+    <lastmod>2016-04-24T13:13:35+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/platform-prividers-of-angular-2/</loc>
+    <lastmod>2016-04-22T09:48:29+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/otherwise-and-default-in-angular-2/</loc>
+    <lastmod>2016-04-17T11:25:31+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/translation-view-children-and-content-children-in-angular-2/</loc>
+    <lastmod>2016-04-16T11:15:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/translation-angular-2-component-styles/</loc>
+    <lastmod>2016-04-16T00:27:46+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/local-variables-and-exportas-of-angular-2/</loc>
+    <lastmod>2016-04-11T00:41:39+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/template-syntax-in-angular-2/</loc>
+    <lastmod>2016-04-11T00:03:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/translation-angular-2-change-detection-explained/</loc>
+    <lastmod>2016-04-10T10:50:17+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/translation-template-driven-form-in-angular-2/</loc>
+    <lastmod>2016-04-10T10:29:17+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/angular2-view-encapsulation-fallback/</loc>
+    <lastmod>2016-04-10T00:23:58+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/post/initial/</loc>
+    <lastmod>2016-04-10T00:01:04+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.lacolaco.net/page/about/</loc>
+  </url>
+  
+</urlset>
