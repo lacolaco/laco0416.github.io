@@ -6,6 +6,7 @@ googleAnalytics = "UA-52362663-4"
 
 [Params]
   logo = "img/icon.png"
+  ogImage = "http://blog.lacolaco.net/img/icon.png"
   subtitle = "JavaScript, Web, Angular"
 
 [Author]
