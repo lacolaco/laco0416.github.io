@@ -92,7 +92,7 @@ export function createComponentFactory(resolver: ComponentResolver, metadata: Co
 
 `createComponentFactory` returns a promise of `ComponentFactory` created dynamically. It's very simple.
 
-Next, use the function in `DynamicHTMLOutlet` directive.
+Next, use the function at new `DynamicHTMLOutlet` directive.
 
 ```ts
 @Directive({
