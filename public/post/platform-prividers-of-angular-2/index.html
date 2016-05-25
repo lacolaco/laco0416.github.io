@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Angular 2のPlatform Provider</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://blog.lacolaco.net/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Angular 2のPlatform Provider" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="img/icon.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.lacolaco.net/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about/">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="http://blog.lacolaco.net/">
+                    <img class="avatar-img" src="http://blog.lacolaco.net/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Angular 2のPlatform Provider</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 22, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<p>Angular 2のDependency Injection(DI)は主にサービスクラスのインスタンスを注入するのに用いられますが、
+実は他にも便利な使い方がいくつかあります。
+今回はその中から <code>PLATFORM_DIRECTIVES</code> と <code>PLATFORM_PIPES</code> の使い方を紹介します。</p>
+
+<h2 id="angular-2のproviderと-multi-オプション:a0a65916a9788d82365896b1e0a8f29b">Angular 2のProviderと<code>multi</code>オプション</h2>
+
+<p>まずはじめに、Angular 2のProviderの仕組みについておさらいしましょう。
+もしAngular 2のDIがさっぱりわからない方は、先に <a href="http://qiita.com/laco0416/items/61eed550d1f6070b36ab">Angular2のDIを知る</a> を読むといいかもしれません。</p>
+
+<p>Angular 2のDIは基本的に、 <strong>トークン</strong> に対して値をセットします。
+TypeScriptでは「型ベースのDI」とよく言われますが、これは型(型アノテーションに使われているクラス)がトークンになっています。
+このトークンはクラスじゃなくてもよくて、文字列でも何でも、オブジェクトであれば何でも許容されます。</p>
+
+<pre><code class="language-ts">providers: [
+    MyClass, // 自動的にMyClassがインスタンス化される
+    new Provider(MyClass, {useClass: MyClass}), // 上と同義
+    new Provider(&quot;myValue&quot;, {useValue: &quot;value&quot;}, // 文字列をトークンにする 
+]    
+</code></pre>
+
+<p>Angular 2では、トークンを定数として提供して、ユーザーが値を自由にセットできるようにしているものがいくつかあります。
+代表的なのは<code>APP_BASE_HREF</code>です。これはAngular 2の<code>Location</code>がベースパスとして使うバスを設定するためのトークンです</p>
+
+<pre><code class="language-ts">new Provider(APP_BASE_HREF, {useValue: &quot;/basepath/&quot;})
+</code></pre>
+
+<p>さらにもう一つ重要なのは、<code>＠Component</code>や<code>bootstrap</code>でProviderが要求される場面では、Providerの配列を渡せるということです。
+配列を渡した場合は内部で自動的に展開されるので、複数のProviderが依存しあっている場合に1つの配列にまとめることができます。</p>
+
+<pre><code class="language-ts">const MY_PROVIDERS = [
+    MyClassA,
+    new Provider(MyClassB, {useValue: new MyClassB(&quot;initial&quot;)}),
+    new Provider(MyClassC, {
+        useFactory: (myClassA: MyClassA, myClassB: myClassB) =&gt; {
+            myClassA.init();
+            return new MyClassC(myClassA, myClassB);
+        },
+        deps: [MyClassA, MyClassB]
+    }
+]
+
+...
+
+providers: [
+     MY_PROVIDERS
+]    
+</code></pre>
+
+<h3 id="multi-オプション:a0a65916a9788d82365896b1e0a8f29b"><code>multi</code> オプション</h3>
+
+<p>さて、Angular 2のDIの基礎を振り返ったところで、ここから先の話で必要になるのが <code>multi</code>オプションです。
+Providerは、同じトークンに対して2回値をセットすると、先にProvideした方は上書きされてしまいます。</p>
+
+<pre><code class="language-ts">[
+    MyClass,
+    new Provider(MyClass, {useClass: MockMyClass}) // 上書きする
+]
+</code></pre>
+
+<p><code>multi</code>オプションは、同じトークンに対して複数のProvideを行うときに、上書きではなく <strong>追加</strong> を行います。
+次の例では、複数のクラスをまとめるトークンを作り、<code>multi</code>で追加しています。</p>
+
+<pre><code class="language-ts">[
+    new Provider(MY_PROVIDERS, {useClass: MyClassA, multi: true}),
+    new Provider(MY_PROVIDERS, {useClass: MyClassB, multi: true}),
+    new Provider(MY_PROVIDERS, {useClass: MyClassC, multi: true}),
+]
+</code></pre>
+
+<p>このオプションを使うことで、配列をInjectしたい場合にその要素を動的に追加することができます。</p>
+
+<h2 id="platform-directives-トークン:a0a65916a9788d82365896b1e0a8f29b"><code>PLATFORM_DIRECTIVES</code> トークン</h2>
+
+<p>というわけで、ようやく本題に入れます！
+<code>PLATFORM_DIRECTIVES</code>トークンは、<code>multi</code>オプションでProviderを追加されることを想定してAngular 2が提供しているものです。
+その名の通り、プラットフォーム全体で使えるディレクティブを提供するトークンです。</p>
+
+<p><a href="https://angular.io/docs/ts/latest/api/core/PLATFORM_DIRECTIVES-let.html">PLATFORM_DIRECTIVES - ts</a></p>
+
+<p>例えば、アプリケーション全体で使うモーダルのコンポーネント <code>ModalComponent</code> を作ったとしましょう。</p>
+
+<pre><code class="language-ts">@Component({
+    selector: &quot;my-modal&quot;,
+    template: `...`
+})
+class ModalComponent {
+    ...
+}
+</code></pre>
+
+<p>このコンポーネントを別のコンポーネントから使うには、使う側のコンポーネントの <code>directives</code> にクラスを指定しないといけません。</p>
+
+<pre><code class="language-ts">@Component({
+    selector: &quot;my-app&quot;,
+    template: &quot;&lt;my-model&gt;&lt;/my-model&gt;&quot;,
+    directives: [ModalComponent]
+})
+class AppComponent {
+}
+</code></pre>
+
+<p>この<code>ModalComponent</code>を他にも多くのコンポーネントから呼び出す時、毎回<code>directives</code>を設定するのは面倒ですね？
+そんな時に<code>PLATFORM_DIRECTIVES</code>の出番です。</p>
+
+<p><code>PLATFORM_DIRECTIVES</code>に<code>ModalComponent</code>を追加することで、プラットフォームの共通ディレクティブであるとして自動的に解決してくれるようになります。</p>
+
+<pre><code class="language-ts">new Provider(PLATFORM_DIRECTIVES, {useValue: [ModalComponent], multi: true})
+</code></pre>
+
+<p>もっとも便利なユースケースは、<code>ROUTER_DIRECTIVES</code>でしょう。
+angular2/routerが提供している<code>routerLink</code>や<code>&lt;router-outlet&gt;</code>をコンポーネントから使うには、<code>directives: [ROUTER_DIRECTIVES]</code> という記述が必要です。
+ここで<code>PLATFORM_DIRECTIVES</code>を使うと、アプリケーション全体でどこでも使えるようになります。</p>
+
+<pre><code class="language-ts">new Provider(PLATFORM_DIRECTIVES, {useValue: ROUTER_DIRECTIVES, multi: true})
+</code></pre>
+
+<p>汎用的なコンポーネントやディレクティブを作った時には、ぜひ活用してみてください。</p>
+
+<h2 id="platform-pipes:a0a65916a9788d82365896b1e0a8f29b"><code>PLATFORM_PIPES</code></h2>
+
+<p>ここまで理解した方ならもう説明の必要はないでしょう。名前の通り、プラットフォーム全体で使えるパイプを定義できるトークンです。
+汎用的なパイプを作った時に活用すると、毎回 <code>pipes: [MyPipe]</code> を書く必要はありません。</p>
+
+<p><a href="https://angular.io/docs/ts/latest/api/compiler/PLATFORM_PIPES-let.html">PLATFORM_PIPES - ts</a></p>
+
+<pre><code class="language-ts">new Provider(PLATFORM_PIPES, {useValue: [MyPipe], multi:true});
+</code></pre>
+
+<h2 id="おまけ-opaquetoken:a0a65916a9788d82365896b1e0a8f29b">おまけ: <code>OpaqueToken</code></h2>
+
+<p>もし <code>PLATFORM_DIRECTIVES</code>や<code>PLATFORM_PIPES</code>というトークンがどうやって作られいるのか気になった方は、無事にAngular 2中級者への階段を踏み出しています！
+これらは <code>OpaqueToken</code> というクラスのインスタンスになっています。
+このクラスは、Providerのトークンとして使いやすいインスタンスを提供してくれます。</p>
+
+<p><a href="https://angular.io/docs/ts/latest/api/core/OpaqueToken-class.html">OpaqueToken - ts</a></p>
+
+<pre><code class="language-ts">var t = new OpaqueToken(&quot;value&quot;);
+var injector = Injector.resolveAndCreate([
+  provide(t, {useValue: &quot;bindingValue&quot;})
+]);
+expect(injector.get(t)).toEqual(&quot;bindingValue&quot;);
+</code></pre>
+
+<p>定数として<code>OpaqueToken</code>のインスタンスを作っておいてアプリケーションで使うようにすると、柔軟なDIを行うことができるでしょう！</p>
+
+<h2 id="まとめ:a0a65916a9788d82365896b1e0a8f29b">まとめ</h2>
+
+<p><code>PLATFORM_DIRECTIVES</code>と<code>PLATFORM_PIPES</code>を使うと、
+汎用的なコンポーネントやディレクティブ、パイプを毎回宣言することなく、どこでも使えるようになります。
+アプリケーションが大きくなってきたらぜひ活用してみてください。</p>
+
+            </article>
+
+            <div class="social">
+                <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                </script>
+                <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20"
+                    height="20" style="border: none;" /></a>
+                <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js"
+                charset="utf-8" async="async"></script>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="http://blog.lacolaco.net/post/otherwise-and-default-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Angular 2のデフォルトルートとotherwiseルート">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="http://blog.lacolaco.net/post/event-broadcasting-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Broadcasting events in Angular 2">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="http://blog.lacolaco.net/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="http://blog.lacolaco.net/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://blog.lacolaco.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://blog.lacolaco.net/js/bootstrap.min.js"></script>
+<script src="http://blog.lacolaco.net/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

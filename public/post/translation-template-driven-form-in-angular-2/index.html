@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>[日本語訳] Template-driven Forms in Angular 2</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://blog.lacolaco.net/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="[日本語訳] Template-driven Forms in Angular 2" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="img/icon.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.lacolaco.net/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about/">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="http://blog.lacolaco.net/">
+                    <img class="avatar-img" src="http://blog.lacolaco.net/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>[日本語訳] Template-driven Forms in Angular 2</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 10, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<ul>
+<li>Original: <a href="http://blog.thoughtram.io/angular/2016/03/21/template-driven-forms-in-angular-2.html">Template-driven Forms in Angular 2</a></li>
+<li>Written by: <a href="http://twitter.com/PascalPrecht">Pascal Precht</a></li>
+<li>Translated at: 04/07/2016</li>
+</ul>
+
+<hr />
+
+<h1 id="angular-2におけるテンプレート駆動フォーム:6f636b7a5b2b66bda6c8ccd81adaa52f">Angular 2におけるテンプレート駆動フォーム</h1>
+
+<p>Angularはフォームを組み立てるのに3つの異なる方法を用意しています。
+1つはテンプレート駆動、アプリケーションコードを一切必要としない方法です。
+そしてローレベルAPIを使ったDOMを一切必要としないモデル駆動の方法と、
+最後はハイレベルのAPI、すなわち<code>FormBuilder</code>を使ったモデル駆動の方法です。</p>
+
+<p>これらの異なる手段からわかるように、目標を達成するための道具がいくつもあるかもしれないのは当然のことです。
+しかし混乱を招いてしまうので、この記事ではAngular 2におけるテンプレート駆動のフォームディレクティブについて明らかにしていきます。</p>
+
+<h2 id="ngform-ディレクティブ:6f636b7a5b2b66bda6c8ccd81adaa52f"><code>ngForm</code>ディレクティブ</h2>
+
+<p>まずはユーザーの情報をいくつか質問するシンプルなログインフォームからはじめましょう。</p>
+
+<pre><code class="language-html">&lt;form&gt;
+  &lt;label&gt;Firstname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot;&gt;
+
+  &lt;label&gt;Lastname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot;&gt;
+
+  &lt;label&gt;Street:&lt;/label&gt;
+  &lt;input type=&quot;text&quot;&gt;
+
+  &lt;label&gt;Zip:&lt;/label&gt;
+  &lt;input type=&quot;text&quot;&gt;
+
+  &lt;label&gt;City:&lt;/label&gt;
+  &lt;input type=&quot;text&quot;&gt;
+
+  &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>私たちはおそらくこんなフォームを何度も作ったことがあります。
+ユーザーの名前と住所を入力するコントロールを持ったシンプルなHTMLのフォームで、ここには何の特別なものはありません。</p>
+
+<p>私たちはここで、Angularが連れてきた<code>&lt;form&gt;</code>というセレクターを持つ<code>ngForm</code>ディレクティブによって、
+実は私たちの<code>form</code>要素がすでに<code>ngForm</code>のインスタンスになっているということに気づきません。
+<code>ngForm</code>はとある理由のために存在します。
+<code>ngForm</code>は私たちにフォームが持っている現在の状態を伝えてくれます。状態というのは次のものです。</p>
+
+<ul>
+<li>フォームの値のJSON表現</li>
+<li>フォーム全体のバリデーション状態</li>
+</ul>
+
+<h3 id="ngform-インスタンスにアクセスする:6f636b7a5b2b66bda6c8ccd81adaa52f"><code>ngForm</code>インスタンスにアクセスする</h3>
+
+<p>ディレクティブのメタデータの<code>exportAs</code>プロパティを使うと、コンポーネントのテンプレート内でディレクティブのインスタンスにアクセスできます。
+例えば、<code>draggable</code>ディレクティブを作ったとき、そのインスタンスを次のように<code>draggable</code>という名前で外部に露出できます。</p>
+
+<pre><code class="language-ts">@Directive({
+  selector: '[draggable]',
+  exportAs: 'draggable'
+})
+class Draggable {
+  ...
+}
+</code></pre>
+
+<p>そして、ディレクティブを使っているテンプレート内でローカル変数の仕組みを使ってアクセスすることができます。</p>
+
+<pre><code class="language-ts">&lt;div draggable #myDraggable=&quot;draggable&quot;&gt;I'm draggable!&lt;/div&gt;
+</code></pre>
+
+<p>ここで<code>myDraggable</code>は<code>Draggable</code>のインスタンスの参照になっていて、
+テンプレート全体で他の式の一部として使うことができます。</p>
+
+<p>これがどうして面白いのか不思議に思うかもしれません。
+そう、<code>ngForm</code>ディレクティブが<code>ngForm</code>として露出されていること、
+それは一切アプリケーションコードを書かずに次のようにフォームのインスタンスにアクセスできるということなのです。</p>
+
+<pre><code class="language-html">&lt;form #form=&quot;ngForm&quot;&gt;
+  ...
+&lt;/form&gt;
+</code></pre>
+
+<h3 id="フォームの送信と-値へのアクセス:6f636b7a5b2b66bda6c8ccd81adaa52f">フォームの送信と、値へのアクセス</h3>
+
+<p>さあ私たちはフォームの値とそのバリデーション状態にアクセスできるようになりました。
+まずはフォームから送信されたデータをログに表示してみましょう。
+私たちがやらなければならないのは、フォームの<code>submit</code>イベントにハンドラーを追加してフォームの値を渡すことだけです。
+実は<code>ngForm</code>のインスタンスには<code>value</code>プロパティがあるので、次のようになります。</p>
+
+<pre><code>&lt;form #form=&quot;ngForm&quot; (submit)=&quot;logForm(form.value)&quot;&gt;
+  ...
+&lt;/form&gt;
+</code></pre>
+
+<p>これでもうまく動きますが、<code>ngForm</code>が送信時に発火しているもう一つのイベントがあります。それが<code>ngSubmit</code>です。
+<code>ngSubmit</code>は<code>submit</code>と一見すると全く同じです。
+しかし、<code>ngSubmit</code>はイベントハンドラーがエラーを出したときには(デフォルトの<code>form</code>要素と同じように)<code>submit</code>されないことと、
+HTTPのPOSTリクエストを発生させることが保証されています。
+ベストプラクティスとして、<code>submit</code>の代わりに<code>ngSubmit</code>を使ってみましょう！</p>
+
+<pre><code class="language-html">&lt;form #form=&quot;ngForm&quot; (ngSubmit)=&quot;logForm(form.value)&quot;&gt;
+  ...
+&lt;/form&gt;
+</code></pre>
+
+<p>さらに、次のようなコンポーネントを用意します。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'app',
+  template: ...
+})
+class App {
+
+  logForm(value: any) {
+    console.log(value);
+  }
+}
+</code></pre>
+
+<p>このコードを実行すると、フォームの値は空のオブジェクトなのがわかります。
+これは正しい挙動です。なぜならまだコンポーネントのテンプレート中に何もしていないからです。
+つまり、私たちはフォームにinput要素を登録しなければなりません。そこで<code>ngControl</code>が登場します。</p>
+
+<h2 id="ngcontrol-ディレクティブ:6f636b7a5b2b66bda6c8ccd81adaa52f"><code>ngControl</code>ディレクティブ</h2>
+
+<p>フォームのインスタンスにコントロールを登録するために、<code>ngControl</code>ディレクティブを使います。<code>ngControl</code>は文字列の名前を持ち、コントロールとしての抽象的なインスタンスを作成します。<code>ngControl</code>で登録されたすべてのフォームコントロールは自動的に<code>form.value</code>に現れ、簡単に処理できるようになります。</p>
+
+<p>いくつかのオブジェクトをフォームに追加し、フォームコントロールとして登録してみましょう！</p>
+
+<pre><code>&lt;form #form=&quot;ngForm&quot; (ngSubmit)=&quot;logForm(form.value)&quot;&gt;
+  &lt;label&gt;Firstname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;firstname&quot;&gt;
+
+  &lt;label&gt;Lastname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;lastname&quot;&gt;
+
+  &lt;label&gt;Street:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;street&quot;&gt;
+
+  &lt;label&gt;Zip:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;zip&quot;&gt;
+
+  &lt;label&gt;City:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;city&quot;&gt;
+
+  &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+
+<p>ばっちりですね！このフォームに適当な値を入力して送信すれば、次のようなログが見られるでしょう。</p>
+
+<pre><code>{
+  firstname: 'Pascal',
+  lastname: 'Precht',
+  street: 'thoughtram Road',
+  zip: '00011',
+  city: 'San Francisco'
+}
+</code></pre>
+
+<p>素晴らしいですね！
+私たちはこのJSONオブジェクトを手に入れて、サーバーへ直接送信することができます。
+しかしちょっと待ってください？もし次のようなもっと複雑な構造が欲しい時はどうすればいいんでしょうか？</p>
+
+<pre><code>{
+  name: {
+    firstname: 'Pascal',
+    lastname: 'Precht',
+  },
+  address: {
+    street: 'thoughtram Road',
+    zip: '00011',
+    city: 'San Francisco'
+  }
+}
+</code></pre>
+
+<p>フォームをsubmitした時に手で組み立てる必要があるのでしょうか？
+答えはノーです！Angularはこれをちゃんとカバーしています。
+というわけで、次は<code>ngControlGroup</code>の紹介です。</p>
+
+<h2 id="ngcontrolgroup-ディレクティブ:6f636b7a5b2b66bda6c8ccd81adaa52f"><code>ngControlGroup</code>ディレクティブ</h2>
+
+<p><code>ngControlGroup</code>はフォームコントロールをグループ化することができます。
+別の言い方をすれば、コントロールグループはコントロールなしには存在できません。
+さらに、コントロールグループはその中にあるコントロールがvalidかどうかを引き継いでくれます。
+これによって簡単にフォームの中でバリデーションチェックがとても簡単になります。</p>
+
+<p>ここであなたはこう考えるかもしれません。
+「ちょっと待てよ？つまりフォーム自体が1つのコントロールグループなんじゃないか？」
+そう、その通りです。フォームは1つのコントロールグループです。</p>
+
+<p>さっそく<code>ngControlGroup</code>を使ってコントロールをグループ化してみましょう！</p>
+
+<pre><code>&lt;fieldset ngControlGroup=&quot;name&quot;&gt;
+  &lt;label&gt;Firstname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;firstname&quot;&gt;
+
+  &lt;label&gt;Lastname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;lastname&quot;&gt;
+&lt;/fieldset&gt;
+
+&lt;fieldset ngControlGroup=&quot;address&quot;&gt;
+  &lt;label&gt;Street:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;street&quot;&gt;
+
+  &lt;label&gt;Zip:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;zip&quot;&gt;
+
+  &lt;label&gt;City:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;city&quot;&gt;
+&lt;/fieldset&gt;
+</code></pre>
+
+<p>ご覧のとおり、上のコードでは私たちはフォームコントロールを<code>&lt;fieldset&gt;</code>要素でラップし、
+<code>ngControlGroup</code>ディレクティブを適用しています。
+これは特に意味があるわけではなく、代わりに<code>&lt;div&gt;</code>要素を使ってもかまいません。
+ポイントは、何かしらの要素である必要があり、
+そこに<code>ngControlGroup</code>をつけることで<code>ngForm</code>に対して登録されるということです。</p>
+
+<p>このフォームを送信すれば次のような出力が得られるでしょう。</p>
+
+<pre><code>{
+  name: {
+    firstname: 'Pascal',
+    lastname: 'Precht',
+  },
+  address: {
+    street: 'thoughtram Road',
+    zip: '00011',
+    city: 'San Francisco'
+  }
+}
+</code></pre>
+
+<p>完璧ですね！
+私たちは望む構造のオブジェクトを一切アプリケーションコードを書かずにフォームだけで構築できました。
+しかし不思議に思うかもしれません。Angular 2でフォームの中で<code>ngModel</code>を使うとどうなるんでしょうか。
+これは良い質問です。</p>
+
+<h2 id="ngmodel-とは:6f636b7a5b2b66bda6c8ccd81adaa52f"><code>ngModel</code>とは？</h2>
+
+<p>Angular 2における<code>ngModel</code>は双方向データバインディングを実装しているものです。
+ただしそれだけではなく、実はもっと多くのケースでシンプルに使えるものです。
+テンプレート駆動のフォームに<code>ngModel</code>をどう使えばいいのでしょうか？そもそも<code>ngModel</code>を使えるのでしょうか？
+もちろん使えます！</p>
+
+<p><code>ngForm</code>や<code>ngControl</code>、<code>ngControlGroup</code>が提供するのはフォームの構造化と、フォームの値へのアクセスですが、
+一方で<code>ngModel</code>が提供するのは双方向データバインディングのためのドメインモデルです。
+言い方を変えれば、<code>form.value</code>はサーバーに送りたいデータであり、
+<code>ngModel</code>はフォームにデータを与えることができますが、これらは同時に使うことができます。</p>
+
+<p><code>ngControl</code>は<code>ngModel</code>がバインドできるようになっています。
+つまり次のように書くことが出来ます。</p>
+
+<pre><code>&lt;fieldset ngControlGroup=&quot;name&quot;&gt;
+  &lt;label&gt;Firstname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;firstname&quot; [(ngModel)]=&quot;firstname&quot;&gt;
+  &lt;p&gt;You entered {{firstname}}&lt;/p&gt;
+
+  &lt;label&gt;Lastname:&lt;/label&gt;
+  &lt;input type=&quot;text&quot; ngControl=&quot;lastname&quot; [(ngModel)]=&quot;lastname&quot;&gt;
+  &lt;p&gt;You entered {{lastname}}&lt;/p&gt;
+&lt;/fieldset&gt;
+</code></pre>
+
+<h2 id="もっと知りたい方は:6f636b7a5b2b66bda6c8ccd81adaa52f">もっと知りたい方は</h2>
+
+<p>もちろんここで述べたのはフォームを作る方法の氷山の一角です。
+バリデーションについてや、入力されたデータに対してエラーメッセージをどう表示するかなど、話していないことがたくさんあります。
+それらについてはまた別の記事で紹介します。
+ただしカスタムバリデーターを作る方法については<a href="http://blog.thoughtram.io/angular/2016/03/14/custom-validators-in-angular-2.html">この記事</a>を見てください。</p>
+
+            </article>
+
+            <div class="social">
+                <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                </script>
+                <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20"
+                    height="20" style="border: none;" /></a>
+                <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js"
+                charset="utf-8" async="async"></script>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="http://blog.lacolaco.net/post/angular2-view-encapsulation-fallback/" data-toggle="tooltip" data-placement="top" title="ViewEncapsulationのフォールバック">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="http://blog.lacolaco.net/post/translation-angular-2-change-detection-explained/" data-toggle="tooltip" data-placement="top" title="[日本語訳] Angular 2 Change Detection Explained">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="http://blog.lacolaco.net/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="http://blog.lacolaco.net/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://blog.lacolaco.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://blog.lacolaco.net/js/bootstrap.min.js"></script>
+<script src="http://blog.lacolaco.net/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

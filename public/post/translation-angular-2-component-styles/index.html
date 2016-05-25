@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>[日本語訳] Angular 2 Component Styles</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://blog.lacolaco.net/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="[日本語訳] Angular 2 Component Styles" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="img/icon.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.lacolaco.net/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about/">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="http://blog.lacolaco.net/">
+                    <img class="avatar-img" src="http://blog.lacolaco.net/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>[日本語訳] Angular 2 Component Styles</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 16, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<ul>
+<li>Original: <a href="https://angular.io/docs/ts/latest/guide/component-styles.html">Component Styles - ts</a></li>
+<li>Written by: <a href="https://angular.io">angular.io</a></li>
+<li>Translated at: 04/15/2016</li>
+</ul>
+
+<hr />
+
+<h1 id="コンポーネントのスタイル:b5b893ba70e0824d332f826e82c33129">コンポーネントのスタイル</h1>
+
+<p>Angular 2のアプリケーションは標準のCSSによってスタイリングすることができます。
+つまり、CSSのスタイルシートやセレクタ、ルールやメディアクエリなどについて知っていることをそのままAngular 2のアプリケーションに適用できます。</p>
+
+<p>さらに、Angular 2はCSSのスタイルシートをモジュール化し、コンポーネントに同梱することが可能です。</p>
+
+<p>この章ではどのようにして <strong>コンポーネントスタイル</strong> を読み込み、適用するかについて解説します。</p>
+
+<h2 id="コンポーネントスタイルを使う:b5b893ba70e0824d332f826e82c33129">コンポーネントスタイルを使う</h2>
+
+<p>Angular 2のコンポーネントを書くとき、HTMLのテンプレートだけでなく、CSSのスタイルも決めるでしょう。
+コンポーネントのテンプレートに対してスタイルを適用する1つの方法は、コンポーネントのメタデータ中の<code>styles</code>プロパティを使うことです。
+<code>styles</code>プロパティはstringの配列としてCSSを受け取ります。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'hero-app',
+  template: `
+    &lt;h1&gt;Tour of Heroes&lt;/h1&gt;
+    &lt;hero-app-main [hero]=hero&gt;&lt;/hero-app-main&gt;`,
+  styles: ['h1 { font-weight: normal; }'],
+  directives: [HeroAppMainComponent]
+})
+</code></pre>
+
+<p>コンポーネントスタイルはこれまでのグローバルのスタイルとはいくつか違いが有ります。</p>
+
+<p>第一に、セレクタはそのコンポーネントのテンプレート内にしか適用されません。
+上の例にある<code>h1 { }</code>セレクタは、<code>hero-app</code>コンポーネントのテンプレート内にある<code>&lt;h1&gt;</code>タグにだけ適用され、
+それ以外の他の場所には影響しません。</p>
+
+<p>これは古典的なCSSとくらべてモジュール化において大きな改良点です。</p>
+
+<ol>
+<li><p>コンポーネントのコンテキストの中で、直感的なセレクタやクラス名を使うことができます</p></li>
+
+<li><p>クラス名やセレクタがアプリケーション中で衝突することを気にする必要がありません</p></li>
+
+<li><p>コンポーネントのスタイルが別の場所から書き換えられることがありません</p></li>
+
+<li><p>プロジェクトの構造が変わり、CSSのコードをTypeScriptやHTMLと同じディレクトリに置くことができます。</p></li>
+
+<li><p>将来的にCSSのコードを変えたり削除したりする際に、そのスタイルが他の場所で使われていないかを気にしなくてよいです</p></li>
+</ol>
+
+<h2 id="特殊セレクタ:b5b893ba70e0824d332f826e82c33129">特殊セレクタ</h2>
+
+<p>コンポーネントスタイルでは<a href="https://www.w3.org/TR/css-scoping-1/">Shadow DOM</a>に由来するいくつかの特殊なセレクタを使うことができます。</p>
+
+<h3 id="host:b5b893ba70e0824d332f826e82c33129"><code>:host</code></h3>
+
+<p><code>:host</code>擬似クラスセレクタは、そのコンポーネント自身にマッチします。(コンポーネント内のすべての要素にヒットするわけではありません)</p>
+
+<pre><code class="language-css">:host {
+  display: block;
+  border: 1px solid black;
+}
+</code></pre>
+
+<p>これはホスト要素にアクセスする唯一の方法です。
+他のセレクタではコンポーネント自身にマッチすることはできません。
+なぜならコンポーネントの要素はそのコンポーネントのテンプレートの一部ではないからです。
+ホスト要素は、その親のコンポーネントのテンプレート内の要素です。</p>
+
+<p>カッコとセレクタを使って表現する <em>関数フォーム</em> を使って、ホストのスタイルを状態に応じて変えることができます。
+次の例では、自身に<code>active</code>クラスが付いているときだけ適用するスタイルを宣言しています。</p>
+
+<pre><code class="language-css">:host(.active) {
+  border-width: 3px;
+}
+</code></pre>
+
+<h3 id="host-context:b5b893ba70e0824d332f826e82c33129"><code>:host-context</code></h3>
+
+<p><code>:host-context</code>セレクタは、コンポーネントの <em>外</em> の状態に応じたスタイルを書くときに便利です。
+例えば、CSSのテーマのクラスがドキュメントの<code>body</code>に適用されているとき、
+コンポーネントのスタイルもそれに追従したい場合があるでしょう。</p>
+
+<p><code>:host-context</code>擬似クラスセレクタは、<code>:host</code>の関数フォームと同じように動作します。
+コンポーネントのホスト要素の親 <em>すべて</em> に、該当するセレクタを持っていないかをチェックします。</p>
+
+<p>次の例ではコンポーネント中の<code>&lt;h2&gt;</code>要素の<code>background-color</code>スタイルを、祖先の要素が<code>theme-light</code>を持っている時だけ変更するように書いています。</p>
+
+<pre><code class="language-css">:host-context(.theme-light) h2 {
+  background-color: #eef;
+}
+</code></pre>
+
+<h3 id="deep:b5b893ba70e0824d332f826e82c33129"><code>/deep/</code></h3>
+
+<p>コンポーネントスタイルは基本的に、自身のテンプレート内にしか適用されません。</p>
+
+<p>ただし、<code>/deep/</code>セレクタを使うと、強制的に子コンポーネントの内部にスタイルを適用することができます。
+ネストはどこまででも深く適用され、テンプレート中の子だけでなく、contentとしての子にも作用します。</p>
+
+<p>次の例では、コンポーネント自身とその子すべてが持つ<code>&lt;h3&gt;</code>要素にマッチするCSSを書いています。</p>
+
+<pre><code class="language-css">:host /deep/ h3 {
+  font-style: italic;
+}
+</code></pre>
+
+<p><code>/deep/</code>セレクタは<code>&gt;&gt;&gt;</code>と書くこともできます。</p>
+
+<h4 id="注意:b5b893ba70e0824d332f826e82c33129">注意</h4>
+
+<p><code>/deep/</code>と<code>&gt;&gt;&gt;</code>は<code>ViewEncapsulation.Emulated</code>でしか使えません。
+<code>ViewEncapsulation.Emulated</code>はコンポーネントのデフォルトの設定です。</p>
+
+<h2 id="スタイルをコンポーネントへ読み込む方法:b5b893ba70e0824d332f826e82c33129">スタイルをコンポーネントへ読み込む方法</h2>
+
+<p>コンポーネントにスタイルを追加する方法はいくつかあります。</p>
+
+<ul>
+<li>テンプレートHTML中に記述する方法</li>
+<li>コンポーネントのメタデータで<code>styles</code>か<code>styleUrls</code>を使う方法</li>
+<li>CSS importsを使う方法</li>
+</ul>
+
+<p>これまでに説明したCSSのスコーピングは、どの方法でも適用されます。</p>
+
+<h3 id="メタデータでスタイルを読み込む:b5b893ba70e0824d332f826e82c33129">メタデータでスタイルを読み込む</h3>
+
+<p><code>@Component</code>デコレータの<code>styles</code>プロパティで、stringの配列として記述できます。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'hero-app',
+  template: `
+    &lt;h1&gt;Tour of Heroes&lt;/h1&gt;
+    &lt;hero-app-main [hero]=hero&gt;&lt;/hero-app-main&gt;`,
+  styles: ['h1 { font-weight: normal; }'],
+  directives: [HeroAppMainComponent]
+})
+</code></pre>
+
+<h3 id="テンプレートインラインスタイル:b5b893ba70e0824d332f826e82c33129">テンプレートインラインスタイル</h3>
+
+<p>テンプレートHTML中に<code>&lt;style&gt;</code>タグで直接埋め込むこともできます。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'hero-controls',
+  template: `
+    &lt;style&gt;
+      button {
+        background-color: white;
+        border: 1px solid #777;
+      }
+    &lt;/style&gt;
+    &lt;h3&gt;Controls&lt;/h3&gt;
+    &lt;button (click)=&quot;activate()&quot;&gt;Activate&lt;/button&gt;
+  `
+})
+</code></pre>
+
+<h3 id="styleのurlをメタデータに記述する:b5b893ba70e0824d332f826e82c33129">StyleのURLをメタデータに記述する</h3>
+
+<p>外部のCSSファイルを<code>styleUrls</code>として記述することができます。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'hero-details',
+  template: `
+    &lt;h2&gt;{{hero.name}}&lt;/h2&gt;
+    &lt;hero-team [hero]=hero&gt;&lt;/hero-team&gt;
+    &lt;ng-content&gt;&lt;/ng-content&gt;
+  `,
+  styleUrls: ['app/hero-details.component.css'],
+  directives: [HeroTeamComponent]
+})
+export class HeroDetailsComponent {
+</code></pre>
+
+<h4 id="注意-1:b5b893ba70e0824d332f826e82c33129">注意</h4>
+
+<p>このURLは、<code>index.html</code>から見た相対パスであり、コンポーネントのファイルから見た相対パスではありません。</p>
+
+<h4 id="webpackの場合:b5b893ba70e0824d332f826e82c33129">Webpackの場合</h4>
+
+<p>Webpackを使っている場合は、外部CSSを使いつつ<code>styles</code>プロパティを使用することもできます。</p>
+
+<pre><code>styles: [require('my.component.css')]
+</code></pre>
+
+<p>こうすることで、バンドル時にCSSの読み込みが完了します。</p>
+
+<h3 id="linkタグによる読み込み:b5b893ba70e0824d332f826e82c33129">Linkタグによる読み込み</h3>
+
+<p>さらに、<code>&lt;link&gt;</code>タグでCSSファイルを読み込むこともできます。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'hero-team',
+  template: `
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;app/hero-team.component.css&quot;&gt;
+    &lt;h3&gt;Team&lt;/h3&gt;
+    &lt;ul&gt;
+      &lt;li *ngFor=&quot;#member of hero.team&quot;&gt;
+        {{member}}
+      &lt;/li&gt;
+    &lt;/ul&gt;`
+})
+</code></pre>
+
+<p>この場合、<code>styleUrls</code>と同じように、アプリケーションのルートからの相対パスで記述します。</p>
+
+<h3 id="css-importsによる読み込み:b5b893ba70e0824d332f826e82c33129">CSS @importsによる読み込み</h3>
+
+<p>最後に、コンポーネントスタイルではCSS標準の<a href="https://developer.mozilla.org/en/docs/Web/CSS/@import"><code>@import</code>ルール</a>を使うこともできます。</p>
+
+<pre><code class="language-css">@import 'hero-details-box.css';
+</code></pre>
+
+<h2 id="ビューのカプセル化をコントロールする-native-emulated-none:b5b893ba70e0824d332f826e82c33129">ビューのカプセル化をコントロールする： Native, Emulated, None</h2>
+
+<p>ここまでに述べたように、コンポーネントのCSSスタイルはカプセル化されています。
+Angular 2では、コンポーネントごとに、スタイルのカプセル化の設定を行うことができます。現在は3つの選択肢があります</p>
+
+<ul>
+<li><p><code>Native</code>：カプセル化にブラウザのネイティブ実装の<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM">Shadow DOM</a>を使います。
+コンポーネントのテンプレートHTMLは、Shadow DOM内に描画されます。</p></li>
+
+<li><p><code>Emulated</code>：(デフォルト)Shadow DOMの振る舞いをエミュレートし、描画後の要素に適切なクラスや属性を自動で付与して擬似的にカプセル化します。</p></li>
+
+<li><p><code>None</code>：Angularによるカプセル化を行いません。
+これまでに述べたスコーピングは適用されず、グローバルなスタイルが直接影響します。</p></li>
+</ul>
+
+<p>これらはコンポーネントのメタデータにある<code>encapsulation</code>プロパティにセットします。</p>
+
+<pre><code class="language-ts">// warning: few browsers support shadow DOM encapsulation at this time
+encapsulation: ViewEncapsulation.Native
+</code></pre>
+
+<p><code>Native</code>はブラウザがShadow DOMを実装している時だけ動作します。
+Shadow DOMはまだサポートが進んでいないため、多くの場合ではデフォルトの<code>Emulated</code>を使うことをおすすめします。</p>
+
+            </article>
+
+            <div class="social">
+                <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                </script>
+                <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20"
+                    height="20" style="border: none;" /></a>
+                <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js"
+                charset="utf-8" async="async"></script>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="http://blog.lacolaco.net/post/local-variables-and-exportas-of-angular-2/" data-toggle="tooltip" data-placement="top" title="Angular 2のローカル変数とexportAs">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="http://blog.lacolaco.net/post/translation-view-children-and-content-children-in-angular-2/" data-toggle="tooltip" data-placement="top" title="[日本語訳] ViewChildren and ContentChildren in Angular 2">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="http://blog.lacolaco.net/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="http://blog.lacolaco.net/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://blog.lacolaco.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://blog.lacolaco.net/js/bootstrap.min.js"></script>
+<script src="http://blog.lacolaco.net/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

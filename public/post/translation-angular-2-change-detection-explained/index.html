@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>[日本語訳] Angular 2 Change Detection Explained</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://blog.lacolaco.net/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://blog.lacolaco.net/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="[日本語訳] Angular 2 Change Detection Explained" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="img/icon.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.lacolaco.net/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about/">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="http://blog.lacolaco.net/">
+                    <img class="avatar-img" src="http://blog.lacolaco.net/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>[日本語訳] Angular 2 Change Detection Explained</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 10, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<ul>
+<li>Original: <a href="http://blog.thoughtram.io//angular/2016/02/22/angular-2-change-detection-explained.html">Angular 2 Change Detection Explained</a></li>
+<li>Written by: <a href="http://twitter.com/PascalPrecht">Pascal Precht</a></li>
+<li>Translated at: 2/23/2016</li>
+</ul>
+
+<hr />
+
+<p><a href="http://ng-nl.org">NG-NL</a>はとても素晴らしかったです!
+私はAngular 2のChange Detectionについての話ができて光栄でしたし、多くの参加者に気に入っていただけて大成功だったようです。
+この記事では、どのようにAngularのChange Detectionが動作しているのか、どうすればそれを高速化できるのかについて誰でも読めるようにするため、
+発表の内容を文章に書き起こしたいと思います。
+もしこの話に興味を持ったなら、<a href="http://pascalprecht.github.io/slides/angular-2-change-detection-explained/#/">こちらのスライド</a>
+を見ることができますし、発表の録画も近いうちに公開されるのでそれを見ることもできるでしょう。</p>
+
+<p>それでは見ていきましょう。</p>
+
+<h2 id="change-detectionとは何なのか:e34e24f7324bef263c740759961bd1be">Change Detectionとは何なのか？</h2>
+
+<p>Change Detectionの基本的な役割は、プログラムの内部の状態を取得し、それを何らかの方法でユーザーインターフェースに可視化することです。
+この状態はオブジェクトや配列、プリミティブなど、JavaScriptにおけるあらゆるデータ構造になりえます。</p>
+
+<p>状態はユーザーインターフェースの中でパラグラフやフォーム、リンク、ボタンとなるかもしれません。
+具体的に言えば、それはWeb上でDOMとなります。
+つまり、私たちは基本的にデータを入力として取得し、DOMを生成してユーザーに見せています。
+このプロセスを私たちはレンダリングと呼んでいます。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-4.png" alt="cd-4" /></p>
+
+<p>しかし、レンダリングは実行時に変更が起きた時、トリッキーになります。
+DOMが描画されてからしばらく経ったあとのことです。
+私たちはどのようにして、モデルの変更と、更新しなければならないDOMの位置を知るのでしょうか？
+DOMツリーへのアクセスは常にコストが高いので、更新する位置を探すだけではなく、なるべく小さなアクセスに留めたいですね。</p>
+
+<p>これには多くの異なった方法で取り組むことができます。
+例えば、一つの方法は単純にHTTPのリクエストを送り、ページ全体を再描画することです。
+別のアプローチはDOMの古い状態と新しい状態を比較して、違う部分だけを描画する方法で、
+これはReactJSが仮想DOMを使って行っていることです。</p>
+
+<p>もしあなたが他のフレームワークがこの問題をどう解決しているかに興味を持っているなら、
+私たちは<a href="http://twitter.com/teropa">Tero</a>が書いた素晴らしい記事 <a href="http://teropa.info/blog/2015/03/02/change-and-its-detection-in-javascript-frameworks.html">Change and its detection in JavaScript frameworks</a>
+をおすすめします。
+この記事ではAngular 2だけに注目していきます。</p>
+
+<p>基本的にChange Detectionのゴールは、データとその変更を常に投影することです。</p>
+
+<h2 id="何が変更を引き起こすのか:e34e24f7324bef263c740759961bd1be">何が変更を引き起こすのか？</h2>
+
+<p>さて、私たちはChange Detectionとは何かについて知りましたが、不思議に思うかもしれません。
+実際にはどんなときに変更が起こるのでしょうか？
+その変更がビューを更新する必要があると、Angularはいつ知るのでしょうか？
+さあ、次のコードを見てきましょう。</p>
+
+<pre><code class="language-ts">@Component({
+  template: `
+    &lt;h1&gt;{{firstname}} {{lastname}}&lt;/h1&gt;
+    &lt;button (click)=&quot;changeName()&quot;&gt;Change name&lt;/button&gt;
+  `
+})
+class MyApp {
+firstname:string = 'Pascal';
+  lastname:string = 'Precht';
+
+changeName() {
+    this.firstname = 'Brad';
+    this.lastname = 'Green';
+  }
+}
+</code></pre>
+
+<p>もしこれがあなたが見る初めてのAngular 2のコンポーネントであれば、
+<a href="http://blog.thoughtram.io/angular/2015/04/09/developing-a-tabs-component-in-angular-2.html">building a tabs component</a>
+を読んだほうがいいかもしれません。</p>
+
+<p>上のコンポーネントはシンプルに2つのプロパティを表示し、
+テンプレート内のボタンがクリックされた時にそれらを変更するメソッドを提供しています。
+ボタンがクリックされた瞬間、アプリケーションの状態が変更されます。
+なぜならコンポーネントのプロパティを変更しているからです。
+その瞬間が、私たちがビューを更新したい瞬間です。</p>
+
+<p>こちらも見てください。</p>
+
+<pre><code class="language-ts">@Component()
+class ContactsApp implements OnInit{
+contacts:Contact[] = [];
+
+constructor(private http: Http) {}
+
+ngOnInit() {
+    this.http.get('/contacts')
+      .map(res =&gt; res.json())
+      .subscribe(contacts =&gt; this.contacts = contacts);
+  }
+}
+</code></pre>
+
+<p>このコンポーネントはコンタクトのリストを持ち、初期化時にHTTPリクエストを処理しています。
+リクエストが返ってきたらリストが更新されます。
+ここで、もう一度アプリケーションの状態が変わっています。
+私たちはここでビューを更新したいです。</p>
+
+<p>基本的に、アプリケーションの状態は次の3つの出来事で変わります。</p>
+
+<ul>
+<li><strong>イベント</strong> - <code>click</code>, <code>submit</code>, &hellip;</li>
+<li><strong>XHR</strong> - サーバーからデータを取得する</li>
+<li><strong>タイマー</strong> - <code>setTimeout()</code>, <code>setInterval()</code></li>
+</ul>
+
+<p>これらはすべて非同期的です。
+ここから導かれる結論は、
+非同期的な処理が行われた後にはいつでも、アプリケーションの状態が変わっている可能性があるということです。
+これがAngularにビューを更新するように教えなければいけないタイミングです。</p>
+
+<h2 id="誰がangularに伝えるのか:e34e24f7324bef263c740759961bd1be">誰がAngularに伝えるのか？</h2>
+
+<p>さあ、私たちは今、何がアプリケーションの状態を変えるのかを知りました。
+しかしこの特定の瞬間にビューを更新するように、Angularに伝えているのは何なのでしょうか？</p>
+
+<p>Angularは私たちに標準のAPIを直接使わせてくれます。
+AngularにDOMを更新するように伝えるために呼び出さないといけない割り込みのメソッドはありません。
+これは魔法でしょうか？</p>
+
+<p>もしあなたが私たちの前回の記事を読んでいたら、
+それが<a href="http://blog.thoughtram.io/angular/2016/01/22/understanding-zones.html">Zones</a>のおかげであることを知っているでしょう。
+事実、Angularは<a href="http://blog.thoughtram.io/angular/2016/02/01/zones-in-angular-2.html">Zones in Angular 2</a>という記事で書いた
+<code>NgZone</code>と呼ばれる自身のZoneを備えています。ぜひこれも読んでください。</p>
+
+<p>要約すると、Angularのソースコードのどこかに<code>ApplicationRef</code>と呼ばれるものがあり、
+それが<code>NgZones</code>の<code>onTurnDone</code>イベントを受信しているということです。
+このイベントが発火されるたびに、<code>AppicationRef</code>が実際にChange Detectionを処理している<code>tick()</code>関数を実行します。</p>
+
+<pre><code class="language-ts">// very simplified version of actual source
+class ApplicationRef {
+
+  changeDetectorRefs:ChangeDetectorRef[] = [];
+
+  constructor(private zone: NgZone) {
+    this.zone.onTurnDone
+      .subscribe(() =&gt; this.zone.run(() =&gt; this.tick());
+  }
+
+  tick() {
+    this.changeDetectorRefs
+      .forEach((ref) =&gt; ref.detectChanges());
+  }
+}
+</code></pre>
+
+<h2 id="change-detection:e34e24f7324bef263c740759961bd1be">Change Detection</h2>
+
+<p>OK、いいですね、私たちはChange Detectionがいつ実行されるのかを知りました。
+ですが、どのように処理されるのでしょうか？
+ええ、Angular2において、まず私たちが知る必要があることは、
+<strong>それぞれのコンポーネントがそれぞれのChange Detectorを持っている</strong> ということです。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-2.png" alt="cd-tree-2" /></p>
+
+<p>これは重大な事実です、なぜならそれぞれのコンポーネントについて個別に、
+いつどのようにChange Detectionを処理するかをコントロールできるようにしてくれるからです。
+詳しくは後で話します。</p>
+
+<p>私たちのコンポーネントツリーのどこかでイベントが起きた、例えばボタンがクリックされたと仮定しましょう。
+次に何が起きるでしょうか？
+私たちはちょうどZoneが与えられたハンドラーを実行し、
+ターンが終了した時にAngularに伝え、
+それが最終的にはAngularにChange Detectionを処理させることを学びました。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-7.png" alt="cd-tree-7" /></p>
+
+<p>それぞれのコンポーネントが自身のChange Detectorを持っていて、
+しかもAngularアプリケーションはコンポーネントツリーで構成されているので、
+当然の結果として私たちは <strong>Change Detectorツリー</strong> も持っています。
+このツリーはデータが常に上から下に流れている有向グラフとしてみることもできます。</p>
+
+<p>なぜデータが上から下に流れるのか、
+それはルートコンポーネントから始まったChange Detectionが、
+毎回ひとつひとつコンポーネントごとに上から下へ処理されるからです。
+一方向のデータフローはサイクルよりも予測しやすいので素晴らしいです。
+私たちは常にビューの中で使われているデータがどこから来たのかを知っています。
+なぜならそれはそのコンポーネントの中からしか来ないからです。</p>
+
+<p>もう一つの興味深い観察点は、Change Detectionは一度通過した後は安定になるということです。
+これは、もしコンポーネントのうちのひとつが
+Change Detectionが処理されている間に何らかの副作用を追加で引き起こした時には
+Angularがエラーを起こす、ということを意味します。</p>
+
+<h2 id="高速化:e34e24f7324bef263c740759961bd1be">高速化</h2>
+
+<p>デフォルトでは、もし私たちがすべてのコンポーネントをイベントのたびに毎回チェックする必要があったとしても、
+Angularはとても速いです。
+Angularは数百万個のチェックを数msで実行できます。
+これは主に、<strong>AngularがVMフレンドリーなコードを生成している</strong> という事実に起因します。</p>
+
+<p>これはどういう意味でしょうか？
+そうですね、私たちはそれぞれのコンポーネントが自身のChange Detectorを持っていると言いました。
+それはそれぞれの個別のコンポーネントのChange Detectionを世話するための
+単一の一般的なものがAngularにあるということではありません。</p>
+
+<p>なぜならどんなモデル構造であってもすべてのコンポーネントをチェックできるためには、
+Change Detectorはダイナミックに書かれなければならないからです。
+このような種類のコードは最適化できないため、VMは好みません。
+オブジェクトの形は常に同じではないため、これは <strong>ポリモーフィック</strong> と考えられます。</p>
+
+<p>それぞれのコンポーネントごとに、<strong>Angularは実行時にChange Detectorのクラスを生成します</strong>。
+それらはそのコンポーネントの形を絶対知っているため、モノモーフィックです。
+VMはこのコードを完全に最適化可能で、とても高速に実行できます。
+これの良い所は、Angularが自動的にやってくれるので私たちがこのことについて考慮する必要がないことです。</p>
+
+<p>このことについてさらに深い説明が欲しければ、<a href="http://twitter.com/victorsavkin">Victor Savkin</a>の
+<a href="https://www.youtube.com/watch?v=jvKGQSFQf10">Change Detection Reinvented</a>をチェックしてください。</p>
+
+<h2 id="スマートなchange-detection:e34e24f7324bef263c740759961bd1be">スマートなChange Detection</h2>
+
+<p>繰り返しますが、Angularはすべてのコンポーネントをイベントが起こるたびに毎回チェックする必要があります。
+なぜなら…そう、アプリケーションの状態が変わっているかもしれないからです。
+しかし、もしアプリケーションの状態が変わっていないとわかっている時、
+アプリケーションの一部についてChange Detectionを実行<strong>しない</strong>ようにAngularに教えられたら
+すばらしいと思いませんか？</p>
+
+<p>そうです、その通り、それは可能です！
+そこには、変更の有無を保証してくれるデータ構造、
+<strong>Immutables</strong>と<strong>Observables</strong>があることがわかります。
+これらの構造や型を使い、それをAngularに教えれば、
+Change Detectionはもっともっと速くなります。
+かっこいいですね。でもどうやるんでしょうか？</p>
+
+<p><strong>可変性を理解する</strong>
+例えばイミュータブルなデータ構造がなぜ、どのように、手助けできるのかを理解するために、
+私たちは可変性が意味することを理解しなければなりません。
+次のようなコンポーネントがあると仮定しましょう。</p>
+
+<pre><code class="language-ts">@Component({
+  template: '&lt;v-card [vData]=&quot;vData&quot;&gt;&lt;/v-card&gt;'
+})
+class VCardApp {
+
+  constructor() {
+    this.vData = {
+      name: 'Christoph Burgdorf',
+      email: 'christoph@thoughtram.io'
+    }
+  }
+
+  changeData() {
+    this.vData.name = 'Pascal Precht';
+  }
+}
+</code></pre>
+
+<p><code>VCardApp</code>は<code>&lt;v-code&gt;</code>を子コンポーネントとして使い、それは<code>vData</code>というInputプロパティを持っています。
+私たちは<code>VCardApp</code>が持っている自身の<code>vData</code>を使ってそのコンポーネントにデータを渡しています。
+<code>vCard</code>は２つのプロパティと、<code>vData</code>の名前を返すメソッド<code>changeData()</code>を持っています。
+ここには何のマジックもありません。</p>
+
+<p>重要な部分は、<code>changeData()</code>が<code>vData</code>を<code>name</code>プロパティを変更することで変化させていることです。
+たとえそのプロパティが変わっても、<code>vData</code>の参照は同じままです。</p>
+
+<p><code>changeData()</code>を実行するなんらかのイベントが発生したと仮定すると、
+Change Detectionが実行されたとき何が起こるでしょうか？
+最初に、<code>vData.name</code>が変更され、それが<code>&lt;v-card&gt;</code>に渡ります。
+その時<code>&lt;v-card&gt;</code>のChange Detectorは与えられた<code>vData</code>がまだ以前と同じかどうかをチェックし、同じになります。
+参照は変わっていませんが、しかし、<code>name</code>プロパティは変わっているので、
+AngularはChange Detectionをそのオブジェクトのために実行します。</p>
+
+<p>デフォルトではJavaScriptにおいてオブジェクトは可変(プリミティブを除いて)であるため、
+Angularは保守的にならざるを得ず、
+イベントが起こると毎回すべてのコンポーネントでChande Detectionを走らせなければなりません。</p>
+
+<p>ここでイミュータブルなデータ構造の出番です。</p>
+
+<h2 id="不変オブジェクト:e34e24f7324bef263c740759961bd1be">不変オブジェクト</h2>
+
+<p>イミュータブルなオブジェクトは変化しないという保証を私たちに与えてくれます。
+それは、もし私たちがイミュータブルなオブジェクトを使い、それを変更したければ、
+必ず新しい参照が得られ、もとのオブジェクトは不変であるということを意味します。</p>
+
+<p>この擬似コードで見てみましょう。</p>
+
+<pre><code class="language-ts">var vData = someAPIForImmutables.create({
+              name: 'Pascal Precht'
+            });
+
+var vData2 = vData.set('name', 'Christoph Burgdorf');
+
+vData === vData2 // false
+</code></pre>
+
+<p><code>someAPIForImmutables</code>はイミュータブルなデータ構造を使いたいときに使う任意のAPIです。
+しかし、ご覧のとおり、私たちは簡単に<code>name</code>プロパティを変更することができません。
+特定の変更と共に新しいオブジェクトが得られ、新しい参照を持っています。
+単純に言えば、<strong>変化があれば新しい参照を得る</strong>ということです。</p>
+
+<h2 id="チェックの回数を減らす:e34e24f7324bef263c740759961bd1be">チェックの回数を減らす</h2>
+
+<p>AngularはInputプロパティに変化がないときにサブツリーのChange Detectionをスキップできます。
+私たちはこの「変化」が「新しい参照」を意味することを学びました。
+もしイミュータブルなオブジェクトをAngularアプリケーションの中で使えば、
+入力が変わっていないとき、
+私たちがやるべきはAngularにコンポーネントがChange Detectionをスキップできることを教えることだけです。</p>
+
+<p><code>&lt;v-card&gt;</code>を見てそれがどうやって動くのか見てみましょう。</p>
+
+<pre><code class="language-ts">@Component({
+  template: `
+    &lt;h2&gt;{{vData.name}}&lt;/h2&gt;
+    &lt;span&gt;{{vData.email}}&lt;/span&gt;
+  `
+})
+class VCardCmp {
+  @Input() vData;
+}
+</code></pre>
+
+<p>ご覧のとおり、<code>VCardCmp</code>は自身のInputプロパティだけに依存しています。素晴らしいです。
+私たちはAngularに、このようにChange Detectionの戦略を<code>OnPush</code>にセットすることで、
+自身のInputに変化がないときは子ツリーのChange Detectionをスキップしていいということを伝えられます。</p>
+
+<pre><code class="language-ts">@Component({
+  template: `
+    &lt;h2&gt;{{vData.name}}&lt;/h2&gt;
+    &lt;span&gt;{{vData.email}}&lt;/span&gt;
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+class VCardCmp {
+  @Input() vData;
+}
+</code></pre>
+
+<p>これで終わりです！
+大きなコンポーネントツリーをイメージしてください。
+イミュータブルなオブジェクトが使われ、それがAngularに伝わったとき、私たちは
+サブツリーすべてをスキップできます。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-8.png" alt="cd-tree-8.png" /></p>
+
+<p><a href="http://twitter.com/jvandemo">Jurgen Van De Moere</a>は
+<a href="http://www.jvandemo.com/how-i-optimized-minesweeper-using-angular-2-and-immutable-js-to-make-it-insanely-fast/">in-depth article</a>で
+彼がどのようにAngular 2とImmutable.jsを使って驚くほど高速なマインスイーパーを作ったのかを書いています。
+ぜひチェックしてください。</p>
+
+<h2 id="observables:e34e24f7324bef263c740759961bd1be">Observables</h2>
+
+<p>先に述べたように、Observablesも変化があったことを保証してくれます。
+イミュータブルなオブジェクトと違い、
+Observablesは変更があっても新しい参照は与えられません。
+代わりに、変更に反応するために購読することができるイベントを発火してくれます。</p>
+
+<p>さて、Observablesを使い、サブツリーのChange Detectionをスキップするために<code>OnPush</code>を使いたい場合、
+オブジェクトの参照は絶対に変わらないのにどうするのでしょうか？
+そのようなときに必要なもの、
+つまり、コンポーネントツリーの中で特定のイベントをチェックするための経路を有効にする
+<strong>とてもスマートな</strong>方法をAngularが持っているということを明らかにします。</p>
+
+<p>それが意味するものを理解するために、、このコンポーネントを見てみましょう。</p>
+
+<pre><code class="language-ts">@Component({
+  template: '{{counter}}',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+class CartBadgeCmp {
+
+  @Input() addItemStream:Observable&lt;any&gt;;
+  counter = 0;
+
+  ngOnInit() {
+    this.addItemStream.subscribe(() =&gt; {
+      this.counter++; // application state changed
+    })
+  }
+}
+</code></pre>
+
+<p>ショッピングカートがあるeコマースアプリケーションを作るとしましょう。
+ユーザーが商品をショッピングカートに入れるたびに、
+小さなカウンターをUI上に出し、
+ユーザーがカートの中の商品の数を見られるようにします。</p>
+
+<p><code>CartBadgeCmp</code>はまさにそれをやっています。
+<code>counter</code>と、カートに商品が追加されるたびに発火されるイベントのStreamである、
+Inputプロパティの<code>addItemStream</code>を持っています。</p>
+
+<p>私たちはこの記事ではObservablesがどのように働くのか詳しくは触れません。
+もしObservablesについて詳しく知りたいなら、
+<a href="http://blog.thoughtram.io/angular/2016/01/06/taking-advantage-of-observables-in-angular2.html">taking advantage of Observables in Angular 2</a>
+を読んでください。</p>
+
+<p>また、私たちはChange Detectionのストラテジーを<code>OnPush</code>にセットし、
+毎回ではなくコンポーネントのInputプロパティが変わったときだけChange Detectionが働くようにします。</p>
+
+<p>しかし、先述の通り<code>addItemStream</code>の参照は変わることはなく、
+このコンポーネントのサブツリーのChange Detectionは全く実行されません。
+このコンポーネントは<code>ngOnInit</code>ライフサイクルフックの中でストリームを購読し、
+カウンターを加算しているので、これは問題です。
+これはアプリケーションの状態の変化であり、
+ビューに反映させたいと思いますよね？</p>
+
+<p>これが私たちの(<strong>すべて</strong>を<strong>OnPush</strong>に設定した)Change Detectorツリーの見え方です。
+イベントが起きてもChange Detectionは全く動作しません。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-10.png" alt="cd-tree-10" /></p>
+
+<p>どうすればAngularに変更を知らせることができるでしょうか？
+どうすればたとえツリー全体が<code>OnPush</code>にセットされていても、
+このコンポーネントはChange Detectionの実行が<strong>必要</strong>だとAngularに知らせることができるでしょうか？</p>
+
+<p>ご心配なく、Angularはちゃんとカバーしています。
+先ほど学んだように、Change Detectionは<strong>常に</strong>上から下に動作します。
+そして私たちがやらないといけないのは、
+変更が起きたコンポーネントまでのツリーの経路の変化を検知する方法です。
+Angularはその経路がわかりませんが、私たちにはわかります。</p>
+
+<p>私たちは<a href="http://blog.thoughtram.io/angular/2015/05/18/dependency-injection-in-angular-2.html">dependency injection</a>を通じて、
+<code>markForCheck()</code>というAPIを備えたコンポーネントの<code>ChangeDetectorRef</code>にアクセスできます。
+このメソッドがまさに私たちが求めているものです！
+これは次のChange Detectionでチェックされるために、ルートからコンポーネントまでの経路をマークします。</p>
+
+<p>さあコンポーネントに注入してみましょう。</p>
+
+<p>Let’s inject it into our component:</p>
+
+<pre><code class="language-ts">constructor(private cd: ChangeDetectorRef) {}
+</code></pre>
+
+<p>そして、チェックされるためにこのコンポーネントからルートまでの経路をAngularに伝えます。</p>
+
+<pre><code class="language-ts">  ngOnInit() {
+    this.addItemStream.subscribe(() =&gt; {
+      this.counter++; // application state changed
+      this.cd.markForCheck(); // marks path
+    })
+  }
+</code></pre>
+
+<p>Boom,これだけです！
+これはObservableのイベントが発火されたあと、Change Detectionが始まる前です。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-12.png" alt="cd-tree-12" /></p>
+
+<p>そして、Change Detectionが実行されると、シンプルに上から下へと進んでいきます。</p>
+
+<p><img src="/img/angular-2-change-detection-explained/cd-tree-13.png" alt="cd-tree-13" /></p>
+
+<p>クールですよね？一度Change Detectionが走った後は、ツリー全体は<code>OnPush</code>状態に戻ります。</p>
+
+<h2 id="もっと詳しく:e34e24f7324bef263c740759961bd1be">もっと詳しく</h2>
+
+<p>実際にはこの記事ではカバーしきれないたくさんのAPIがありますが、
+スライドや発表の録画を見るといいでしょう。</p>
+
+<p>また、<a href="https://github.com/thoughtram/angular2-change-detection-demos">リポジトリ</a>には
+あなたのローカルマシンで試すためのいくつかのデモがあります。</p>
+
+<p>イミュータブルなデータ構造やObservableがどのようにAngularのアプリケーションを速くできるのかについて
+もう少し明らかにしました。</p>
+
+<h2 id="謝辞:e34e24f7324bef263c740759961bd1be">謝辞</h2>
+
+<p>この発表を準備するにあたって、<strong>多大な</strong>助けと支援となった
+<a href="http://twitter.com/jvandemo">Jurgen Van De Moere</a>に感謝したい。
+彼は私の理解について議論するのに多くの時間を費やし、
+このコンテンツに入っている私を助ける良い質問を沢山挙げてくれました。
+また、彼はデモがよく動くように確認してくれました。
+彼のCSSスキルは素晴らしいです。
+Jurgen、そんな支えになるいい人であることにとてもとても感謝します。</p>
+
+<p>Angular 2のChange Detectionについての質問にたくさん答えてくれた
+<a href="http://twitter.com/victorsavkin">Victor Savkin</a>と彼が書いた
+とても参考になる記事に感謝したい。
+ありがとうVictor！</p>
+
+            </article>
+
+            <div class="social">
+                <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                </script>
+                <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20"
+                    height="20" style="border: none;" /></a>
+                <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js"
+                charset="utf-8" async="async"></script>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="http://blog.lacolaco.net/post/translation-template-driven-form-in-angular-2/" data-toggle="tooltip" data-placement="top" title="[日本語訳] Template-driven Forms in Angular 2">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="http://blog.lacolaco.net/post/template-syntax-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Angular 2の*シンタックス">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="http://blog.lacolaco.net/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="http://blog.lacolaco.net/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://blog.lacolaco.net/js/jquery-1.11.2.min.js"></script>
+<script src="http://blog.lacolaco.net/js/bootstrap.min.js"></script>
+<script src="http://blog.lacolaco.net/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>
