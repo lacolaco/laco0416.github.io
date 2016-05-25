@@ -39,7 +39,7 @@ const dynamicComponent = Component({
 })(DynamicComponent);
 ```
 
-Decorators aren't magic but just function-calling.
+**Decorator isn't magic. It's just a function-calling.**
 
 ## Dynamic Component Loading
 
