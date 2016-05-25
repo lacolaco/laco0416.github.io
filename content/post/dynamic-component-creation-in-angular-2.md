@@ -6,7 +6,7 @@ title = "Dynamic Component Creation in Angular 2"
 +++
 
 Since Angular 2, `$compile` was dropped. 
-There are no ways to insert HTML fragments into the component view except `innerHTML` hack.
+There are no ways to insert HTML fragments into the component view except using `innerHTML`.
 But if we could create a component and load it...? Yes, we can do it!
 This post will explain about **dynamic HTML projection** in Angular 2 with dynamic component creation.
 
