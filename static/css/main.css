@@ -91,6 +91,12 @@ img {
   }
 }
 
+div.social-button {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 100%;
+}
+
 /* --- Navbar --- */
 
 .navbar-custom {
