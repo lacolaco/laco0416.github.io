@@ -14,7 +14,7 @@ Angular version: 2.0.0-rc.1
 
 <!--more-->
 
-## `Component` function
+## `Component` as a function
 
 We usually use a decorator, `@Component`, to create a component class like the following:
 
@@ -39,13 +39,14 @@ const dynamicComponent = Component({
 })(DynamicComponent);
 ```
 
-It's important that decorators aren't magic but just function calling.
+Decorators aren't magic but just function-calling.
 
 ## Dynamic Component Loading
 
 We can already use `ViewContainerRef` and `ComponentResolver` to load components into the host component dynamically.
-[ViewContainerRef - ts](https://angular.io/docs/ts/latest/api/core/index/ViewContainerRef-class.html)
-[ComponentResolver - ts](https://angular.io/docs/ts/latest/api/core/index/ComponentResolver-class.html)
+
+- [ViewContainerRef - ts](https://angular.io/docs/ts/latest/api/core/index/ViewContainerRef-class.html)
+- [ComponentResolver - ts](https://angular.io/docs/ts/latest/api/core/index/ComponentResolver-class.html)
 
 ### ViewContainerRef
 `ViewContainerRef` is a **container** where one or more views can be attached.
