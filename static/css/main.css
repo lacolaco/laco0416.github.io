@@ -91,6 +91,10 @@ img {
   }
 }
 
+.social {
+  padding: 10px 0;
+}
+
 div.social-button {
   display: inline-block;
   vertical-align: top;
