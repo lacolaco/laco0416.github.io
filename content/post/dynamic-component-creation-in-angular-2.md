@@ -62,7 +62,7 @@ Result:
 <loaded-directive></loaded-directive>
 ```
 
-Another is **loading as embedded view***. It needs `TemplateRef`.
+Another is **loading as embedded view**. It needs `TemplateRef`.
 
 Result: 
 
@@ -75,7 +75,7 @@ Result:
 ### ComponentResolver
 `ComponentResolver` is a service to create `ComponentFactory` from a component type. 
 All components are loaded into the view by `ComponentFactory`. 
-`ComponentResolver` has a method, `resolveComponent`, which return a `Promise` of `ComponentFactory`.
+`ComponentResolver` has a method, `resolveComponent`, which return a promise of `ComponentFactory`.
 
 ## Dynamic Component Factory
 
