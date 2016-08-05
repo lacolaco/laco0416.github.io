@@ -557,3 +557,8 @@ table tr th :last-child,
 table tr td :last-child {
   margin-bottom: 0;
 }
+
+a.linkjuice {
+    text-decoration: none;
+
+}
