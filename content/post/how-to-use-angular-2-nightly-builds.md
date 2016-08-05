@@ -31,7 +31,7 @@ So these help us if you want to **use new features** or **avoid bugs** which not
 
 ## How to use
 
-Each repos have its `package.json`. so we can install these via `npm install`.
+Each repo has its `package.json`. so we can install these via `npm install`.
 
 ```
 $ npm install --save angular/core-builds
