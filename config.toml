@@ -4,6 +4,13 @@ title = "laco's blog"
 theme = "beautifulhugo"
 googleAnalytics = "UA-52362663-4"
 
+[blackfriday]
+  angledQuotes = false
+  fractions = false
+  hrefTargetBlank = true
+  plainIDAnchors = true
+  extensions = ["hardLineBreak"]
+
 [Params]
   logo = "img/icon.png"
   ogImage = "http://blog.lacolaco.net/img/icon.png"
