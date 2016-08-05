@@ -8,7 +8,7 @@ googleAnalytics = "UA-52362663-4"
   angledQuotes = false
   fractions = false
   hrefTargetBlank = true
-  plainIDAnchors = true
+#  plainIDAnchors = true
   extensions = ["hardLineBreak"]
 
 [Params]
