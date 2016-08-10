@@ -5,6 +5,10 @@ title = "Dynamic Component Creation in Angular 2"
 
 +++
 
+**Edit**
+Revised in [Dynamic Component Creation in Angular 2 RC.5](/post/dynamic-component-creation-in-angular-2-rc-5/)
+
+
 Since Angular 2, `$compile` was dropped. 
 There are no ways to insert HTML fragments into the component view except using `innerHTML`.
 But if we could create a component and load it...? Yes, we can do it!
