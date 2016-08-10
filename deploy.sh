@@ -20,5 +20,5 @@ git commit -m "$msg"
 git push origin `git subtree split --prefix public hugo-src`:master --force
 # git subtree push --prefix=public origin master
 git rm -rf public/
-git commit -m "$msg" --amend
-git push --force origin hugo-src
+git commit -m "$msg" --amend 
+git push --force origin hugo-src --allow-empty
