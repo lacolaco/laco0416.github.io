@@ -35,11 +35,13 @@ Work
 
 Date        | Event   
 ----        | ---- 
+09/27/2016  | Attend AngularConnect 2016 (London, Britain) 
+09/03/2016  | Speaker at [HTML5 Conference](http://events.html5j.org/conference/2016/9/) (Tokyo, Japan) ([slide](http://slides.com/laco/first-step-to-angular-land))
 04/21/2016  | Speaker at [ng-japan](http://ngjapan.org/) (Tokyo, Japan) ([slide](http://blog.lacolaco.net/slides/a-way-for-happy-angular-days/#/))
 02/18/2016  | My first [contribution](https://github.com/angular/angular/pull/6341) to Angular2 🎉
 10/18/2015  | Speaker at [nextwebconf](http://nextwebconf.connpass.com/event/19699/) (Tokyo, Japan)
 04/01/2015  | Joined [Topgate](https://www.topgate.co.jp/)
 03/21/2015  | Moved from Fukuoka to Tokyo
 07/09/2014  | Attended Google DevFest Japan 2014 Summer
-05/25/2013  | Attended Google DevFest Japan 2013 and met to [Dart](https://www.dartlang.org/)
+05/25/2013  | Attended Google DevFest Japan 2013 and met [Dart](https://www.dartlang.org/)
 
