@@ -1,4 +1,4 @@
-baseurl = "http://blog.lacolaco.net/"
+baseurl = "http://lacolaco.net/"
 languageCode = "ja-JP"
 title = "laco's blog"
 theme = "beautifulhugo"
@@ -14,7 +14,7 @@ disqusShortName = "blog-lacolaco"
 
 [Params]
   logo = "img/icon.png"
-  ogImage = "http://blog.lacolaco.net/img/icon.png"
+  ogImage = "http://lacolaco.net/img/icon.png"
   subtitle = "JavaScript, Web, Angular"
 
 [Author]
