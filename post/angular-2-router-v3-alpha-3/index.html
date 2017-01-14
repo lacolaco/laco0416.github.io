@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Angular 2 Router v3.0.0-alpha.3を触ってみた</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="//laco0416.github.io/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Angular 2 Router v3.0.0-alpha.3を触ってみた" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="//laco0416.github.io/img/icon.png" />
+
+  <script type="text/javascript" src="//laco0416.github.io/js/linkjuice.min.js"></script>
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="//laco0416.github.io/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="//laco0416.github.io/">
+                    <img class="avatar-img" src="//laco0416.github.io/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Angular 2 Router v3.0.0-alpha.3を触ってみた</h1>
+      
+      
+      
+      <span class="post-meta">Posted on June 10, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<p>今日リリースされたAngular 2 Router v3.0.0-alpha.3を触ってみたうえでの注意点や感想を書いておきます。</p>
+
+<h3 id="インストール">インストール</h3>
+
+<pre><code>$ npm install -S -E @angular/router@3.0.0-alpha.3
+</code></pre>
+
+<p>すでにlatestも3.0.0-alpha.3になっているんですが、とりあえずバージョン固定の <code>-E</code> にしておくのをオススメします</p>
+
+<p>また、 <code>typings</code> と <code>typescript@next</code> が必要です。 前者は <code>postinstall</code> で要求されるのでインストール時にだけ必要で、後者はビルドに必要です。</p>
+
+<h3 id="router-deprecated-からの変更点"><code>@router-deprecated</code> からの変更点</h3>
+
+<p>ほぼすべてが変わったので書き換える箇所は多かったですが、書き換え方は単純だったのでさほど苦しみはなかったです</p>
+
+<h4 id="ルート定義">ルート定義</h4>
+
+<ul>
+<li><code>RouteConfig</code> は無くなった</li>
+<li><code>RouterConfig</code> 型でルートを記述する</li>
+<li><code>name</code> は無くなった</li>
+<li><code>useAsDefault</code> は <code>index</code> になった</li>
+<li>入れ子のルートは <code>children</code> を使う</li>
+<li>ワイルドカードは <code>**</code></li>
+</ul>
+
+<pre><code class="language-ts">export const ROUTES: RouterConfig = [
+    { path: '/home', component: HomeCmp, index: true },
+    { path: '/chat', component: ChatCmp},
+    { 
+        path: '/team/:id', 
+        component: TeamCmp,
+        children: [
+            { path: '/details', component: DetailsCmp }
+        ] 
+    },
+    { path: '**', redirectTo: '/home' }
+]
+</code></pre>
+
+<ul>
+<li><strong>bootstrap時に <code>provideRouter</code> を使う</strong></li>
+</ul>
+
+<p><code>RouterOutlet</code> の使い方は今までと変わりません。ルートのコンポーネントと、<code>children</code>を持つコンポーネントは<code>&lt;router-outlet&gt;</code>を持つ必要があります</p>
+
+<pre><code class="language-ts">import {ROUTES} from './app.routes';
+
+bootstrap(App, [
+    provideRouter(ROUTES);
+]);
+</code></pre>
+
+<p>これまでと違い、ルート定義はコンポーネントの持ち物ではなく、アプリケーションの持ち物になりました。
+<code>@RouteConfig</code> で書いていたルート定義をカットアンドペーストでガシガシ集めていく作業です。</p>
+
+<h4 id="ナビゲーション">ナビゲーション</h4>
+
+<p>ルート定義から <code>name</code> がなくなったので、必然的にURLのパスでナビゲーションを行います。
+セグメントを配列形式で表現するのはそのままです。</p>
+
+<pre><code class="language-ts">this.router.navigate(['/team', this.teamId, 'user', this.userName]);
+</code></pre>
+
+<p>RouterLinkを使うと次のようになります。これもほとんど変わってないですね</p>
+
+<pre><code class="language-html">&lt;a [routerLink]=&quot;['/team', teamId, 'user', userName]&quot;&gt;{{ userName }}&lt;/a&gt;
+</code></pre>
+
+<p>相対パスでの移動も可能ですが、今のところは相対パスの解決をするために <code>ActivatedRoute</code> を使わないといけません</p>
+
+<pre><code class="language-ts">@Component({...})
+class TeamCmp {
+
+    constructor(private router: Router, private route: ActivatedRoute) {
+    }
+
+    navigateToMember(name: string) {
+        this.router.navigate(['./user', name], { relativeTo: this.route });
+    }
+}
+</code></pre>
+
+<p>すこし冗長ですが、<code>relativeTo</code> に渡したRoute(つまり <code>/team/:id</code>) を起点にパスの解決をしてくれます。
+<code>ActivatedRoute</code> はこのあとにも何度も出てくるRouter v3の重要キャラクターです。</p>
+
+<p>クエリパラメータを付けてナビゲートしたいときは次のようにします</p>
+
+<pre><code class="language-ts">const params = { foo: 'bar' };
+
+this.router.navigate(['/with-query-params'], { queryParams: params });
+// =&gt; /with-query-params?foo=bar
+</code></pre>
+
+<p>フラグメント( <code>#section</code> 的なやつ) も同様です</p>
+
+<pre><code class="language-ts">this.router.navigate(['/with-fragment'], { fragment: 'sectionA' });
+// =&gt; /with-fragment#sectionA
+</code></pre>
+
+<p>リンクパラメータの中にオブジェクトを挿入すると、そのセグメントでのマトリクスパラメータになります。
+v1やv2ではこれがクエリパラメータと混ざってしまうバグなどありましたが、完全に別物になったので使いやすくなりました</p>
+
+<pre><code class="language-ts">this.router.navigate(['/foo', {extra: true}, 'bar']);
+// =&gt; /foo;extra=true/bar
+</code></pre>
+
+<h4 id="パラメータの受け取り">パラメータの受け取り</h4>
+
+<p>コンポーネントが現在のルートからデータを取得するためには <code>ActivatedRoute</code> を使います。</p>
+
+<p><code>/team/:id</code> のようなURLパラメータは <code>ActivatedRoute#params</code> から取得できます。
+これはObservableになっていて、<code>.subscribe</code>することで非同期的にパラメータを取得できます。</p>
+
+<pre><code class="language-ts">@Component({...})
+class TeamCmp {
+    id: string;
+
+    constructor(private router: Router, private route: ActivatedRoute) {
+    }
+
+    ngOnInit() {
+        this.route.params.subscribe(params =&gt; {
+            this.id = params['id'];
+        });
+    }
+}
+</code></pre>
+
+<p>今までは確実にルーターから読み込まれたときにパラメータを取得するには <code>routerOnActivate</code> で <code>ComponentInstruction</code> を受け取る必要がありましたが、
+<code>ActivatedRoute</code>がその役目を負ってくれるので、コンポーネントの初期化は<code>ngOnInit</code>にまとめることができます。</p>
+
+<p>上位のルートのパラメータを取得するには少し複雑になります。例えばユーザー詳細からチームのIDを手に入れるには次のように書きます</p>
+
+<pre><code class="language-ts">@Component({...})
+class UserCmp {
+    teamId: string;
+    name: string;
+
+    constructor(private router: Router, private route: ActivatedRoute) {
+    }
+
+    ngOnInit() {
+        const teamRoute = this.router.routerState.parent(this.route);
+        this.teamRoute.params.subscribe(params =&gt; {
+            this.teamId = params['id'];
+        });
+        this.route.params.subscribe(params =&gt; {
+            this.name = params['name'];
+        });
+    }
+}
+</code></pre>
+
+<p>クエリパラメータやフラグメントも同様にObservableで手に入ります。これらはどのルートにいるかに寄らないので、<code>Router</code>だけで取得できます。</p>
+
+<pre><code class="language-ts">const currentState = this.router.routerState;
+currentState.queryParams.subscribe(params =&gt; {
+    // params: {[key:string]: string}
+});
+currentState.fragment.subscribe(fragment =&gt; {
+    // fragment: string
+});
+</code></pre>
+
+<h4 id="その他">その他</h4>
+
+<p>ルートの状態の変更は <code>Router#events</code> からObservableで取得できます。</p>
+
+<pre><code class="language-ts">this.router.events.subscribe(ev =&gt; {
+    console.log(ev);
+});
+</code></pre>
+
+<p><code>CanActivate</code> や <code>CanDeactivate</code> はまだ試せていません。 <code>Guard</code> という仕組みもあって強力な遷移制御ができるので、後日試します。
+公式のサンプルを見るとCanDeactivateとGuardの実例があるので参考になると思います。</p>
+
+<p><a href="http://plnkr.co/edit/ER0tf8fpGHZiuVWB7Q07?p=preview" target="_blank">http://plnkr.co/edit/ER0tf8fpGHZiuVWB7Q07?p=preview</a></p>
+
+<h3 id="注意点">注意点</h3>
+
+<h4 id="typescript-1-9を要求する">TypeScript 1.9を要求する</h4>
+
+<p>配布されているパッケージが含んでいるd.tsファイルに<code>readonly</code>が含まれているので、TypeScript 1.9以降でないとビルドできません。</p>
+
+<h4 id="いくつかのバグ">いくつかのバグ</h4>
+
+<p>次の2つのバグを踏みました。</p>
+
+<ul>
+<li><a href="https://github.com/angular/vladivostok/issues/26" target="_blank">Bug: CanDeactivate doesn&rsquo;t run from child route · Issue #26 · angular/vladivostok</a></li>
+</ul>
+
+<p>ネストされたルートから別のネストの中のルートに移動しようとすると、<code>CanDeactivate</code>の解決順序のバグでエラーが発生します。
+ワークアラウンドとして、直接ナビゲートするのではなく、上位のルートを踏んでから段階的に遷移することで回避できます。</p>
+
+<pre><code class="language-ts">// from menu1/item1
+this.router.navigate(['/'])
+    .then(() =&gt; {
+        this.router.navigate(['/menu2/item1']);
+    });
+</code></pre>
+
+<ul>
+<li><a href="https://github.com/angular/vladivostok/issues/16" target="_blank">Bug: URL is not updated to index route path · Issue #16 · angular/vladivostok</a></li>
+</ul>
+
+<p><code>index</code> オプションを使って設定したルートが使われるときに、本来のURLに書き換えられないバグです。
+<code>/home</code> をindexにしたときに、 <code>/</code> に来たらHomeCmpが表示されますが、URLは<code>/</code>のままになってしまいます。</p>
+
+<p>これは今のところどうしようもないので、無理やり解決したければURLの変更を監視してlocationを書き換えないといけません</p>
+
+<h3 id="所感">所感</h3>
+
+<p>Router v1やv2とはルート定義の書き方が大きく変わりましたが、そこは本質ではなくて、Observableの積極的な活用こそがv3の肝です。
+Observableによって手に入る最新の状態を使えば良いので、<code>RouteParams</code>や<code>ComponentInstruction</code>で混乱することはありません。
+ミュータブルな値を扱わずに済むというのが、v3が素晴らしいルータである理由のひとつです。</p>
+
+<p>とはいえまだalphaバージョンでバグもあり完全ではないですが、すぐにBeta Routerから移行できるだけのものは揃っているようです。
+ルート定義が増えるほど手間も増えるので、Beta Routerを使っている場合はなるべく早く書き換えたほうがよいでしょう。
+これから開発する場合はv3で決まりです。</p>
+
+            </article>
+            
+            <hr>
+                
+            <div class="social">
+                <div id="fb-root"></div>
+                <script>
+                    (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+                </script>
+
+                <div class="social-button">
+                    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </div>
+
+                <div class="social-button">
+                    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                        title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加"
+                            width="20" height="20" style="border: none;" /></a>
+                    <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+                </div>
+                <div class="social-button fb-share-button" data-layout="button" data-mobile-iframe="true"></div>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="//laco0416.github.io/post/dynamic-component-creation-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Dynamic Component Creation in Angular 2">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="//laco0416.github.io/post/how-to-use-angular-2-nightly-builds/" data-toggle="tooltip" data-placement="top" title="How to Use Angular 2 Nightly Builds">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+            <div class="disqus-comments">
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/angular-2-router-v3-alpha-3\/';
+    var disqus_title = 'Angular 2 Router v3.0.0-alpha.3を触ってみた';
+    var disqus_url = '\/\/laco0416.github.io\/post\/angular-2-router-v3-alpha-3\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+      <div class="row disqus-comments">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/angular-2-router-v3-alpha-3\/';
+    var disqus_title = 'Angular 2 Router v3.0.0-alpha.3を触ってみた';
+    var disqus_url = '\/\/laco0416.github.io\/post\/angular-2-router-v3-alpha-3\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="//laco0416.github.io/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="//laco0416.github.io/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="//laco0416.github.io/js/jquery-1.11.2.min.js"></script>
+<script src="//laco0416.github.io/js/bootstrap.min.js"></script>
+<script src="//laco0416.github.io/js/main.js"></script>
+
+<script>
+    linkjuice.init('.blog-post', {
+        selectors: ['h2', 'h3', 'h4'],
+        icon: ''
+    });
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

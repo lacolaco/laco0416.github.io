@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Angular 2 New Router Overview</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="//laco0416.github.io/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Angular 2 New Router Overview" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="//laco0416.github.io/img/icon.png" />
+
+  <script type="text/javascript" src="//laco0416.github.io/js/linkjuice.min.js"></script>
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="//laco0416.github.io/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="//laco0416.github.io/">
+                    <img class="avatar-img" src="//laco0416.github.io/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Angular 2 New Router Overview</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 30, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<p>EDIT(2016-05-02):</p>
+
+<ul>
+<li>Add a section for wildcard route</li>
+<li>Update from <code>Tree&lt;RouteSegment&gt;</code> to <code>RouteTree</code></li>
+<li>Add a part of <code>router-link-active</code> class</li>
+</ul>
+
+<hr />
+
+<p>Angular core team (mainly <a href="https://twitter.com/victorsavkin" target="_blank">@victorsavkin</a>) is developing new router package; <strong>angular2/alt_router</strong>.
+It&rsquo;s still experimental but its APIs are easier and more intuitive than <em>old</em> angular2/router.
+Let&rsquo;s figure out overview of next generation router!</p>
+
+<p>CAUTION: <strong>Every contents in this article can be always deprecated.</strong></p>
+
+<h2 id="routerconfig-to-routes"><code>@RouterConfig</code> to <code>@Routes</code></h2>
+
+<p>In order to declare a setting of routing, we have to use <code>Routes</code> decorator like old <code>RouteConfig</code>.
+But its element is so simple, which has only two properties; <code>path</code> and <code>component</code>.</p>
+
+<pre><code class="language-ts">@Component({...})
+class UserComponent {
+}
+
+@Component({...})
+@Routes([
+    new Route({path: &quot;/user/:name&quot;, component: UserComponent })
+])
+class TeamComponent {
+}
+
+@Component({...})
+@Routes([
+    {path: &quot;/team/:id&quot;, component: TeamComponent}
+])
+class AppRootComponent {
+}
+</code></pre>
+
+<p>And <strong>wildcards</strong> are supported.</p>
+
+<pre><code>@Component({...})
+@Routes([
+    {path: &quot;/team/:id&quot;, component: TeamComponent},
+    {path: &quot;/*&quot;, component: DefaultComponent}
+])
+class AppRootComponent {
+}
+</code></pre>
+
+<p>Point: <strong>New route config no longer has a <em>name</em> property.</strong></p>
+
+<h2 id="router-outlet-component"><code>&lt;router-outlet&gt;</code> component</h2>
+
+<p>We can use <code>&lt;router-outlet&gt;</code> as well as old router.</p>
+
+<pre><code class="language-ts">@Component({
+    ...
+    template: `
+    &lt;!-- default outlet --&gt;    
+    &lt;router-outlet&gt;&lt;/router-outlet&gt;
+    &lt;!-- aux outlet --&gt;    
+    &lt;router-outlet name=&quot;aux&quot;&gt;&lt;/router-outlet&gt;
+    `,
+    directives: [ROUTER_DIRECTIVES]
+})
+</code></pre>
+
+<h2 id="routerlink-directive"><code>routerLink</code> directive</h2>
+
+<p><code>routerLink</code> directive is still alive, but it takes an array of <strong>url segments</strong>.</p>
+
+<pre><code class="language-html">&lt;a [routerLink]=&quot;['/team', 33, 'user', 'victor']&quot;&gt;Victor Savkin&lt;/a&gt;
+
+&lt;!--equivalent--&gt;
+&lt;a [routerLink]=&quot;['/team/33/user/victor']&quot;&gt;Victor Savkin&lt;/a&gt;
+</code></pre>
+
+<p>If the link matches current route, <code>router-link-active</code> class is applied.</p>
+
+<h2 id="router-class"><code>Router</code> class</h2>
+
+<p>New router has <code>Router</code> class, which is almost similar to old <code>Router</code>.</p>
+
+<pre><code class="language-ts">@Component({...})
+class SomeComponent {
+    constructor(private router: Router) {}
+    
+    doNavigationByUrl() {
+        this.router.navigateByUrl(&quot;/some/path&quot;);
+    }
+    
+    doNavigationByArray() {
+        this.router.navigate([&quot;/some/path&quot;]);
+    }
+    
+    listenUrlChangeEvent() {
+        this.router.changes.subscribe(() =&gt; {
+            // `changes` gives no arguments.
+        });
+    }
+}
+</code></pre>
+
+<h2 id="lifecycle-methods">Lifecycle methods</h2>
+
+<p>New router has only two lifecycle methods yet, <code>OnActivate</code> and <code>CanDeactivate</code>.</p>
+
+<h3 id="onactivate"><code>OnActivate</code></h3>
+
+<p>New <code>OnActivate</code> interface has a <code>routerOnActivate</code> method.</p>
+
+<pre><code class="language-ts">@Component({...})
+class SomeComponent implements OnActivate {
+    routerOnActivate(
+        curr: RouteSegment, 
+        prev?: RouteSegment, 
+        currTree?: RouteTree, 
+        prevTree?: RouteTree
+    ): void {
+        ...
+    }
+}
+</code></pre>
+
+<p>Arguments of <code>routerOnActivate</code> are completely changed.</p>
+
+<ul>
+<li><strong>curr: RouteSegment</strong>: Current (in activating) segment</li>
+<li><strong>prev?: RouteSegment</strong>: Previous segment</li>
+<li><strong>currTree?: RouteTree;</strong>: A segment tree composing current route</li>
+<li><strong>prevTree?: RouteTree;</strong>: A previous segment tree</li>
+</ul>
+
+<h3 id="routesegment-new-api-like-componentinstruction"><code>RouteSegment</code>: new API like <code>ComponentInstruction</code></h3>
+
+<p><code>RouteSegment</code> represents an information of the component transition.
+It&rsquo;s similar to <code>ComponentInstruction</code>.</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">ComponentInstruction</th>
+<th align="center">RouteSegment</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><code>inst.componentInstruction</code></td>
+<td align="center"><code>segment.component</code></td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.params</code></td>
+<td align="center"><code>segment.parameters</code></td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.urlParams</code></td>
+<td align="center"><code>segment.parameters</code></td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.params[key]</code></td>
+<td align="center"><code>segment.getParam(key)</code></td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.urlPath</code></td>
+<td align="center"><code>segment.stringifiedUrlSegments()</code> or <code>Location.path()</code></td>
+</tr>
+
+<tr>
+<td align="center">-</td>
+<td align="center"><code>segment.outlet</code></td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.routeName</code></td>
+<td align="center">-</td>
+</tr>
+
+<tr>
+<td align="center"><code>inst.routeData</code></td>
+<td align="center">-</td>
+</tr>
+</tbody>
+</table>
+
+<p>We can use <code>getParam()</code> to get route parameters.</p>
+
+<pre><code>@Component({...})
+class TeamComponent {
+    id: string;
+    
+    routerOnActivate(curr: RouteSegment) {
+        this.id = curr.getParam(&quot;id&quot;);
+    }
+}
+
+@Component({...})
+@Routes([
+    {path: &quot;/team/:id&quot;, component: TeamComponent}
+])
+class AppRootComponent {
+}
+</code></pre>
+
+<h3 id="routetree-tree-structure-of-routes"><code>RouteTree</code>: Tree structure of routes</h3>
+
+<p><code>RouteSegment</code> has the information of <em>single</em> route transition.
+it means the segment doesn&rsquo;t have any parameters of parent routes.</p>
+
+<pre><code class="language-ts">@Component({...})
+class UserComponent {
+    
+    routerOnActivate(curr: RouteSegment) {
+        let name = curr.getParam(&quot;name&quot;); // OK!
+        let teamId = curr.getParam(&quot;id&quot;); // NG!
+    }
+}
+
+@Component({...})
+@Routes([
+    new Route({path: &quot;/user/:name&quot;, component: UserComponent })
+])
+class TeamComponent {
+}
+
+@Component({...})
+@Routes([
+    {path: &quot;/team/:id&quot;, component: TeamComponent}
+])
+class AppRootComponent {
+}
+</code></pre>
+
+<p>In this case, <code>currTree</code> allows us to access <strong>parent segment</strong>.</p>
+
+<pre><code>@Component({...})
+class UserComponent {
+    
+    routerOnActivate(curr: RouteSegment, prev, currTree: RouteTree) {
+        let name = curr.getParam(&quot;name&quot;); // OK!
+        let teamSegment = currTree.parent(curr); // &quot;parent of curr&quot;
+        let teamId = teamSegment.getParam(&quot;id&quot;); // OK!
+    }
+}
+</code></pre>
+
+<p>Likewise, the tree has <strong>child segment</strong></p>
+
+<pre><code>@Component({...})
+class TeamComponent {    
+    routerOnActivate(curr: RouteSegment, prev, currTree: RouteTree) {
+        let id = curr.getParam(&quot;id&quot;);
+        let userSegment = currTree.firstChild(curr);
+        let currentUserName = userSegment.getParam(&quot;name&quot;);
+    }
+}
+</code></pre>
+
+<p>Point: New API; <code>RouteSegment</code> and <code>RouteTree</code></p>
+
+<h3 id="candeactivate"><code>CanDeactivate</code></h3>
+
+<p><code>CanDeactivate</code> defines route lifecycle method <code>routerCanDeactivate</code> same as old router&rsquo;s one.</p>
+
+<pre><code class="language-ts">@Component({...})
+class SomeComponent implements CanDeactivate {
+  constructor(private logService: LogService) {}
+  
+  routerCanDeactivate(currTree: RouteTree, furuteTree: RouteTree): Promise&lt;boolean&gt; {
+    return Promise.resolve(confirm('Are you sure you want to leave?'));
+  }
+}
+</code></pre>
+
+<h2 id="summary">Summary</h2>
+
+<ul>
+<li><code>&lt;router-outlet&gt;</code> and <code>routerLink</code> are alive!</li>
+<li><code>RouteConfig</code> turns into <code>Routes</code></li>
+<li>Route definition no longer has own name</li>
+<li>New API: <code>RouteSegment</code> and <code>RouteTree</code></li>
+</ul>
+
+<p>New router is nice but you should be careful.</p>
+
+<p><strong>Don&rsquo;t forget that&rsquo;s experimental!</strong></p>
+
+            </article>
+            
+            <hr>
+                
+            <div class="social">
+                <div id="fb-root"></div>
+                <script>
+                    (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+                </script>
+
+                <div class="social-button">
+                    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </div>
+
+                <div class="social-button">
+                    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                        title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加"
+                            width="20" height="20" style="border: none;" /></a>
+                    <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+                </div>
+                <div class="social-button fb-share-button" data-layout="button" data-mobile-iframe="true"></div>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="//laco0416.github.io/post/event-broadcasting-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Broadcasting events in Angular 2">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="//laco0416.github.io/post/dynamic-component-creation-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Dynamic Component Creation in Angular 2">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+            <div class="disqus-comments">
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/angular-2-alt-router-overview\/';
+    var disqus_title = 'Angular 2 New Router Overview';
+    var disqus_url = '\/\/laco0416.github.io\/post\/angular-2-alt-router-overview\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+      <div class="row disqus-comments">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/angular-2-alt-router-overview\/';
+    var disqus_title = 'Angular 2 New Router Overview';
+    var disqus_url = '\/\/laco0416.github.io\/post\/angular-2-alt-router-overview\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="//laco0416.github.io/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="//laco0416.github.io/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="//laco0416.github.io/js/jquery-1.11.2.min.js"></script>
+<script src="//laco0416.github.io/js/bootstrap.min.js"></script>
+<script src="//laco0416.github.io/js/main.js"></script>
+
+<script>
+    linkjuice.init('.blog-post', {
+        selectors: ['h2', 'h3', 'h4'],
+        icon: ''
+    });
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

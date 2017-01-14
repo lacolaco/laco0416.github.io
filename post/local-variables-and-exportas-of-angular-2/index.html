@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Angular 2のローカル変数とexportAs</title>
+
+  <meta name="author" content="Suguru INATOMI" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="//laco0416.github.io/index.xml" type="application/rss+xml" title="laco&#39;s blog">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="//laco0416.github.io/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Angular 2のローカル変数とexportAs" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="//laco0416.github.io/img/icon.png" />
+
+  <script type="text/javascript" src="//laco0416.github.io/js/linkjuice.min.js"></script>
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="//laco0416.github.io/">laco&#39;s blog</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="main-navbar">
+            <ul class="nav navbar-nav navbar-right">
+                 
+                <li>
+                    <a title="About" href="/page/about">About</a>
+                </li>
+                  
+                <li>
+                    <a title="RSS" href="/index.xml">RSS</a>
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="avatar-container">
+            <div class="avatar-img-border">
+                
+                <a title="laco&#39;s blog" href="//laco0416.github.io/">
+                    <img class="avatar-img" src="//laco0416.github.io/img/icon.png" alt="laco&#39;s blog" />
+                </a>
+                
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Angular 2のローカル変数とexportAs</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 11, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <article role="main" class="blog-post">
+                
+
+<p>Angular 2には<strong>local variables</strong>(ローカル変数)という機能があります。
+公式のチュートリアルやデベロッパーガイドを読んでいると突然登場してみなさんを惑わしているかもしれません。
+しかし、この機能はAngular 2を使いこなす上でとても重要なものなので、ぜひ知っておきましょう。</p>
+
+<h2 id="ローカル変数と-シンタックス">ローカル変数と<code>#</code>シンタックス</h2>
+
+<p>ローカル変数とは、コンポーネントのテンプレート中で定義して使用できる変数のことです。
+ローカル変数には原則として、ローカル変数を定義した要素のインスタンスが代入されます。
+ローカル変数の定義は<code>#</code>シンタックスを使います。</p>
+
+<p>次の例では、<code>input</code>要素をローカル変数<code>i</code>として定義し、
+ボタンをクリックするときに<code>input</code>要素の値をコンポーネントに渡しています。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'my-app',
+  template: `
+    &lt;input type=&quot;text&quot; #i&gt;
+    &lt;button (click)=&quot;submit(i.value)&quot;&gt;submit&lt;/button&gt;
+    &lt;p&gt;
+      {{ value }}
+    &lt;/p&gt;
+  `
+})
+export class App {
+  value: string;
+  
+  submit(value: string) {
+    this.value = value;
+  }
+}
+</code></pre>
+
+<p>ここでローカル変数<code>i</code>は<code>HTMLInputElement</code>のインスタンスになっています。
+ローカル変数を使うと、データバインディングを行うことなく、要素が持つプロパティや属性を直接使うことができます。</p>
+
+<h3 id="var-シンタックス"><code>var-*</code>シンタックス</h3>
+
+<p><code>#</code>シンタックスは簡単に書けて便利ですが、通常だと<code>#</code>記号はHTMLの中で使うことができないため、
+Angular以外の何らかのツールを使おうとするとエラーを引き起こすことがあります。
+そこで正常なHTMLとしての体裁を守ったままローカル変数を定義する方法として、<code>var-*</code>シンタックスも用意されています。</p>
+
+<p><code>var-*</code>シンタックスを使って先程のテンプレートを書き直すと次のようになります。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'my-app',
+  template: `
+    &lt;input type=&quot;text&quot; var-i&gt;
+    &lt;button (click)=&quot;submit(i.value)&quot;&gt;submit&lt;/button&gt;
+    &lt;p&gt;
+      {{ value }}
+    &lt;/p&gt;
+  `
+})
+</code></pre>
+
+<h2 id="ローカル変数とフォーム">ローカル変数とフォーム</h2>
+
+<p>Angular 2のローカル変数は、HTML要素のインスタンスを簡単に得ることができるので、
+<code>form</code>要素や<code>video</code>要素といった、メソッドを持つ複雑な要素と併用することでとても便利になります。
+公式のチートシートには<code>video</code>要素をローカル変数に代入して<code>play()</code>メソッドを使っている例が紹介されています。</p>
+
+<pre><code class="language-html">&lt;video #movieplayer ...&gt;
+  &lt;button (click)=&quot;movieplayer.play()&quot;&gt;
+&lt;/video&gt;
+</code></pre>
+
+<p>同じように<code>form</code>要素をローカル変数に代入して便利に使ってみましょう！
+次の例では<code>form</code>要素をローカル変数<code>f</code>に代入し、ボタンのクリックイベントで<code>reset()</code>メソッドを呼び出しています。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'my-app',
+  template: `
+    &lt;form #f&gt;
+      &lt;input type=&quot;text&quot;&gt;
+      &lt;button (click)=&quot;f.reset()&quot;&gt;reset&lt;/button&gt;
+    &lt;/form&gt;
+  `
+})
+export class App {
+}
+</code></pre>
+
+<p>一切スクリプトを書かずにフォームのリセットが実装できました！
+初めは見慣れない<code>#</code>記号に戸惑うかもしれませんが、実はとても簡単で便利なものだということがわかってきましたか？</p>
+
+<h2 id="exportas-属性"><code>exportAs</code>属性</h2>
+
+<p>ここまでのローカル変数は定義された要素のインスタンスを引き出すだけでしたが、
+ローカル変数は<code>exportAs</code>という機能によってさらに強力な機能になります。さっそく見ていきましょう！</p>
+
+<p><code>exportAs</code>属性はディレクティブのメタデータの1つで、
+ローカル変数にHTML要素ではなくディレクティブのインスタンスを代入させたいときに使います。
+Angular 2に組み込まれている<code>ngForm</code>ディレクティブは<code>exportAs</code>を活用しているいいサンプルです。
+<code>ngForm</code>ディレクティブのセレクタは<code>&lt;form&gt;</code>に一致するようになっていて、
+HTML標準の<code>form</code>要素が自動的に<code>ngForm</code>ディレクティブで拡張されています。</p>
+
+<pre><code class="language-ts">@Directive({
+  selector: 'form:not([ngNoForm]):not([ngFormModel]),ngForm,[ngForm]',
+  bindings: [formDirectiveProvider],
+  host: {
+    '(submit)': 'onSubmit()',
+  },
+  outputs: ['ngSubmit'],
+  exportAs: 'ngForm'
+})
+</code></pre>
+
+<p><a href="https://github.com/angular/angular/blob/master/modules%2Fangular2%2Fsrc%2Fcommon%2Fforms%2Fdirectives%2Fng_form.ts#L80-L88" target="_blank">angular/ng_form.ts at master · angular/angular</a></p>
+
+<p>ここで、<code>exportAs: 'ngForm'</code>というメタデータの設定に注目してください。
+<code>ngForm</code>は<code>form</code>要素に一致しますが、ただ<code>&lt;form #f&gt;</code>のようにローカル変数を定義しても代入されるのは<code>HTMLFormElement</code>のインスタンスだけです。
+<code>form</code>要素に隠れている<code>ngForm</code>ディレクティブのインスタンスを得るには、<code>&lt;form #f=&quot;ngForm&quot;&gt;</code>という定義を行います。
+つまり、<code>exportAs</code>で指定された名前をキーに、ディレクティブのインスタンスを得ることができるのです。</p>
+
+<p><code>ngForm</code>のインスタンスを使うと、フォームの操作がとても簡単になります。次の例ではフォームに入力された値をJSONオブジェクトとして取り出して表示しています。</p>
+
+<pre><code class="language-ts">@Component({
+  selector: 'my-app',
+  template: `
+    &lt;form #f #ngf=&quot;ngForm&quot; (ngSubmit)=&quot;submit(ngf.value)&quot;&gt;
+      &lt;input type=&quot;text&quot; ngControl=&quot;name&quot;&gt;
+      
+      &lt;button type=&quot;submit&quot;&gt;submit&lt;/button&gt;
+      &lt;button (click)=&quot;f.reset()&quot;&gt;reset&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;p&gt;{{ value | json }}&lt;/p&gt;
+  `,
+  directives: []
+})
+export class App {
+  value: any;
+  
+  submit(value: any) {
+    this.value = value;
+  }
+}
+</code></pre>
+
+<p>ローカル変数<code>f</code>は何も値を与えていないので、<code>form</code>要素のインスタンスになりますが、
+ローカル変数<code>ngf</code>は<code>ngForm</code>をキーに<code>ngForm</code>ディレクティブのインスタンスが代入されます。
+<code>ngForm</code>ディレクティブはフォーム全体の値をオブジェクトとして扱える<code>value</code>プロパティを持っているので、
+<code>ngSubmit</code>イベントでコンポーネントに値を渡しています。</p>
+
+<p>このように、テンプレート中でディレクティブのメソッドやプロパティにアクセスできるのがローカル変数と<code>exportAs</code>の力です。</p>
+
+<h2 id="exportas-を使ってみよう"><code>exportAs</code>を使ってみよう</h2>
+
+<p>もちろん自分で作るディレクティブにも<code>exportAs</code>を使うことができます。
+最後に自作ディレクティブをローカル変数として扱う例を紹介します。</p>
+
+<p><code>MyDiv</code>ディレクティブは、<code>div</code>要素に一致するセレクタと、自身の<code>text-transform</code>スタイルを切り替えるメソッドを持っています。
+そしてインスタンスを<code>myDiv</code>として公開しています。</p>
+
+<pre><code class="language-ts">@Directive({
+  selector: &quot;div&quot;,
+  exportAs: &quot;myDiv&quot;
+})
+class MyDiv {
+  
+  constructor(private element: ElementRef, private renderer: Renderer) {
+  }
+  
+  toUpper() {
+    return this.renderer.setElementStyle(this.element.nativeElement, &quot;text-transform&quot;, &quot;uppercase&quot;);
+  }
+  
+  toLower() {
+    return this.renderer.setElementStyle(this.element.nativeElement, &quot;text-transform&quot;, &quot;lowercase&quot;);
+  }
+  
+  reset() {
+    return this.renderer.setElementStyle(this.element.nativeElement, &quot;text-transform&quot;, &quot;&quot;);
+  }
+}
+</code></pre>
+
+<p>これをコンポーネントから使うと、次のようになります。</p>
+
+<pre><code>@Component({
+  selector: 'my-app',
+  template: `
+    &lt;div #d=&quot;myDiv&quot;&gt;Angular 2&lt;/div&gt;
+    &lt;button (click)=&quot;d.toUpper()&quot;&gt;toUpper&lt;/button&gt;
+    &lt;button (click)=&quot;d.toLower()&quot;&gt;toLower&lt;/button&gt;
+    &lt;button (click)=&quot;d.reset()&quot;&gt;Reset&lt;/button&gt;
+  `,
+  directives: [MyDiv]
+})
+export class App {
+}
+</code></pre>
+
+<p><a href="http://plnkr.co/edit/xDSVImO4wbFYLGIqViFO?p=preview" target="_blank">こちら</a> で実際に動くサンプルを見ることができます。</p>
+
+<h2 id="まとめ">まとめ</h2>
+
+<p>Angular 2のローカル変数について基礎的な部分を紹介し、<code>exportAs</code>を活用することで機能的なディレクティブを作れることがわかってもらえたと思います。
+ローカル変数を使うとコンポーネントのコード量を減らし、テンプレート内で直感的にHTML要素やディレクティブのインスタンスを扱うことができます。
+ぜひ活用してみてください。</p>
+
+            </article>
+            
+            <hr>
+                
+            <div class="social">
+                <div id="fb-root"></div>
+                <script>
+                    (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+                </script>
+
+                <div class="social-button">
+                    <a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </div>
+
+                <div class="social-button">
+                    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja"
+                        title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加"
+                            width="20" height="20" style="border: none;" /></a>
+                    <script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+                </div>
+                <div class="social-button fb-share-button" data-layout="button" data-mobile-iframe="true"></div>
+            </div>
+
+            <ul class="pager blog-pager">
+                
+                <li class="previous">
+                    <a href="//laco0416.github.io/post/template-syntax-in-angular-2/" data-toggle="tooltip" data-placement="top" title="Angular 2の*シンタックス">&larr; Previous Post</a>
+                </li>
+                 
+                <li class="next">
+                    <a href="//laco0416.github.io/post/translation-angular-2-component-styles/" data-toggle="tooltip" data-placement="top" title="[日本語訳] Angular 2 Component Styles">Next Post &rarr;</a>
+                </li>
+                
+            </ul>
+
+            
+            <div class="disqus-comments">
+                <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/local-variables-and-exportas-of-angular-2\/';
+    var disqus_title = 'Angular 2のローカル変数とexportAs';
+    var disqus_url = '\/\/laco0416.github.io\/post\/local-variables-and-exportas-of-angular-2\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+      
+
+      
+      <div class="row disqus-comments">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'blog-lacolaco';
+    var disqus_identifier = '\/\/laco0416.github.io\/post\/local-variables-and-exportas-of-angular-2\/';
+    var disqus_title = 'Angular 2のローカル変数とexportAs';
+    var disqus_url = '\/\/laco0416.github.io\/post\/local-variables-and-exportas-of-angular-2\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+      
+
+    </div>
+
+    <footer>
+    <div class="container beautiful-jekyll-footer">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center footer-links">
+                     
+                    <li>
+                        <a href="https://github.com/laco0416" title="GitHub">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                     
+                    <li>
+                        <a href="https://twitter.com/laco0416" title="Twitter">
+                            <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+                        </a>
+                    </li>
+                       
+
+                    <li>
+                        <a href="//laco0416.github.io/index.xml" title="RSS">
+                            <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <div id="search-form-wrap" class="">
+                            <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+                                <input type="search" name="q" results="0" class="search-form-input" placeholder="Site Search">
+                                <input type="hidden" name="sitesearch" value="http://laco0416.github.io">
+                            </form>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <p class="copyright text-muted">
+                    Suguru INATOMI &nbsp;&bull;&nbsp; 2016  &nbsp;&bull;&nbsp;
+                    <a href="//laco0416.github.io/">laco&#39;s blog</a> 
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://laco0416.github.io/" data-text="laco notes">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+                    </script>
+                </p>
+                
+                <p class="theme-by text-muted">
+                    Theme by
+                    <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="//laco0416.github.io/js/jquery-1.11.2.min.js"></script>
+<script src="//laco0416.github.io/js/bootstrap.min.js"></script>
+<script src="//laco0416.github.io/js/main.js"></script>
+
+<script>
+    linkjuice.init('.blog-post', {
+        selectors: ['h2', 'h3', 'h4'],
+        icon: ''
+    });
+</script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-52362663-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>

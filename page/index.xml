@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pages on laco&#39;s blog</title>
+    <link>//laco0416.github.io/page/</link>
+    <description>Recent content in Pages on laco&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-JP</language>
+    <atom:link href="//laco0416.github.io/page/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About</title>
+      <link>//laco0416.github.io/page/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//laco0416.github.io/page/about/</guid>
+      <description>
+
+&lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
+
+&lt;dl&gt;
+&lt;dt&gt;Name&lt;/dt&gt;
+&lt;dd&gt;Suguru INATOMI a.k.a. Laco&lt;/dd&gt;
+&lt;dt&gt;Age&lt;/dt&gt;
+&lt;dd&gt;23&lt;/dd&gt;
+&lt;dt&gt;Location&lt;/dt&gt;
+&lt;dd&gt;Tokyo, Japan&lt;/dd&gt;
+&lt;dt&gt;Work&lt;/dt&gt;
+&lt;dd&gt;Engineer at &lt;a href=&#34;https://www.topgate.co.jp/&#34; target=&#34;_blank&#34;&gt;Topgate&lt;/a&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;p&gt;&lt;img src=&#34;//laco0416.github.io/img/about.jpg&#34; alt=&#34;ng-japan2016&#34; /&gt;
+&lt;br&gt;
+&lt;small&gt;at &lt;a href=&#34;http://ngjapan.org/&#34; target=&#34;_blank&#34;&gt;ng-japan&lt;/a&gt; 2016&lt;/small&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://twitter.com/laco0416&#34; target=&#34;_blank&#34;&gt;Twitter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://twitter.com/suguru.inatomi&#34; target=&#34;_blank&#34;&gt;Facebook&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;mailto:laco0416@gmail.com&#34; target=&#34;_blank&#34;&gt;Email&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;activities&#34;&gt;Activities&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Angular Japan Users Group&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ng-sake.connpass.com/&#34; target=&#34;_blank&#34;&gt;ng-sake&lt;/a&gt; (Angular meetup community)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/laco0416&#34; target=&#34;_blank&#34;&gt;Open source&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;timeline&#34;&gt;Timeline&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Date&lt;/th&gt;
+&lt;th&gt;Event&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;09/27/2016&lt;/td&gt;
+&lt;td&gt;Attend AngularConnect 2016 (London, Britain)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;09/03/2016&lt;/td&gt;
+&lt;td&gt;Speaker at &lt;a href=&#34;http://events.html5j.org/conference/2016/9/&#34; target=&#34;_blank&#34;&gt;HTML5 Conference&lt;/a&gt; (Tokyo, Japan) (&lt;a href=&#34;http://slides.com/laco/first-step-to-angular-land&#34; target=&#34;_blank&#34;&gt;slide&lt;/a&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;04/21/2016&lt;/td&gt;
+&lt;td&gt;Speaker at &lt;a href=&#34;http://ngjapan.org/&#34; target=&#34;_blank&#34;&gt;ng-japan&lt;/a&gt; (Tokyo, Japan) (&lt;a href=&#34;http://blog.lacolaco.net/slides/a-way-for-happy-angular-days/#/&#34; target=&#34;_blank&#34;&gt;slide&lt;/a&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;02/18/2016&lt;/td&gt;
+&lt;td&gt;My first &lt;a href=&#34;https://github.com/angular/angular/pull/6341&#34; target=&#34;_blank&#34;&gt;contribution&lt;/a&gt; to Angular2 🎉&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;10/18/2015&lt;/td&gt;
+&lt;td&gt;Speaker at &lt;a href=&#34;http://nextwebconf.connpass.com/event/19699/&#34; target=&#34;_blank&#34;&gt;nextwebconf&lt;/a&gt; (Tokyo, Japan)&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;04/01/2015&lt;/td&gt;
+&lt;td&gt;Joined &lt;a href=&#34;https://www.topgate.co.jp/&#34; target=&#34;_blank&#34;&gt;Topgate&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;03/21/2015&lt;/td&gt;
+&lt;td&gt;Moved from Fukuoka to Tokyo&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;07/09/2014&lt;/td&gt;
+&lt;td&gt;Attended Google DevFest Japan 2014 Summer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;05/25/2013&lt;/td&gt;
+&lt;td&gt;Attended Google DevFest Japan 2013 and met &lt;a href=&#34;https://www.dartlang.org/&#34; target=&#34;_blank&#34;&gt;Dart&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
